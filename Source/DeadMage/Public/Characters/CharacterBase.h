@@ -32,11 +32,11 @@ protected:
 	void SendGameplayEventToActor(ACharacterBase* Character, const FGameplayTag EventTag);
 	bool ApplyGameplayEffectsToSelf(const TSubclassOf<UGameplayEffect>& Effect,
 	                                const FGameplayEffectContextHandle& InEffectContext);
-
-private:
-
+	
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystem;
+
+private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Player|DataAssets")
 	TObjectPtr<UCharacterAbilitiesDataAsset> CharacterDataAsset;

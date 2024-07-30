@@ -63,7 +63,7 @@ void ACharacterBase::SendGameplayEventToActor(ACharacterBase* Character, const F
 void ACharacterBase::GiveAbilities() const
 {
 	// Server side
-	if (HasAuthority() && AbilitySystem)
+	if (HasAuthority() && AbilitySystem && CharacterDataAsset)
 	{
 		for (const TSubclassOf<UGameplayAbility> DefaultAbility : CharacterDataAsset->CharacterData.Abilities)
 		{
@@ -75,7 +75,7 @@ void ACharacterBase::GiveAbilities() const
 void ACharacterBase::ApplyStartupEffects()
 {
 	// Server side
-	if (HasAuthority())
+	if (HasAuthority() && CharacterDataAsset)
 	{
 		FGameplayEffectContextHandle EffectContext = AbilitySystem->MakeEffectContext();
 		EffectContext.AddSourceObject(this);
