@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "CharacterBase.h"
+#include "GameplayTagContainer.h"
 #include "InputActionValue.h"
+#include "Interfaces/PlayerCharacterInterface.h"
 #include "PlayerCharacter.generated.h"
 
 class USpringArmComponent;
@@ -17,7 +19,7 @@ class UInputAction;
 #define ISOMETRIC_ANGLE 90
 
 UCLASS()
-class DEADMAGE_API APlayerCharacter : public ACharacterBase
+class DEADMAGE_API APlayerCharacter : public ACharacterBase, public IPlayerCharacterInterface
 {
 	GENERATED_BODY()
 
@@ -28,6 +30,14 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<USpringArmComponent> SpringArm;
+
+	// Gameplay Tags
+	UPROPERTY(EditDefaultsOnly, Category = "Player|AbilityTags")
+	FGameplayTag DashAbilityTag;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Player|AbilityTags")
+	FGameplayTag AttackAbilityTag;
+	// End of Gameplay Tags
 
 	APlayerCharacter();
 	
@@ -68,5 +78,8 @@ private:
 
 	// Add mapping context to enhanced input subsystem
 	void SetInputMappingContext() const;
+
+	// Interface
+	virtual APlayerCharacter* GetPlayerCharacter_Implementation() override;
 
 };

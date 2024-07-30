@@ -30,6 +30,7 @@ APlayerCharacter::APlayerCharacter()
 
 	if (GetCharacterMovement())
 	{
+		GetCharacterMovement()->SetJumpAllowed(false);
 		GetCharacterMovement()->bOrientRotationToMovement = true;
 		GetCharacterMovement()->bIgnoreBaseRotation = true;
 	}
@@ -88,13 +89,12 @@ void APlayerCharacter::MovementAction(const FInputActionValue& Value)
 
 void APlayerCharacter::AttackAction(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp, Error, TEXT("[%hs]"), __FUNCTION__);
+	SendGameplayEventToActor(this, AttackAbilityTag);
 }
 
 void APlayerCharacter::DashAction(const FInputActionValue& Value)
 {
-	const FVector DashVector = GetActorForwardVector() * 1000.f;
-	LaunchCharacter(DashVector, true, false);
+	SendGameplayEventToActor(this, DashAbilityTag);
 }
 
 void APlayerCharacter::SetInputMappingContext() const
@@ -115,6 +115,12 @@ void APlayerCharacter::SetInputMappingContext() const
 	}
 
 	EnhancedInputSubsystem->AddMappingContext(PlayerMappingContext, PRIORITY_0);
+}
+
+// Interface
+APlayerCharacter* APlayerCharacter::GetPlayerCharacter_Implementation()
+{
+	return this;
 }
 
 
