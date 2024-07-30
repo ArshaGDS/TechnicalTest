@@ -12,6 +12,9 @@
 class UCharacterAbilitiesDataAsset;
 class UAbilitySystemComponent;
 
+// To avoid the magic number
+#define DEFAULT_EFFECT_LEVEL 1
+
 UCLASS()
 class DEADMAGE_API ACharacterBase : public ACharacter, public IAbilitySystemInterface
 {

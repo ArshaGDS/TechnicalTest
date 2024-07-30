@@ -9,6 +9,7 @@
 #include "Interfaces/PlayerCharacterInterface.h"
 #include "PlayerCharacter.generated.h"
 
+class UPlayerAttributeSet;
 class USpringArmComponent;
 class UCameraComponent;
 class UInputMappingContext;
@@ -16,7 +17,6 @@ class UInputAction;
 
 // To avoid the magic number
 #define PRIORITY_0 0
-#define ISOMETRIC_ANGLE 90
 
 UCLASS()
 class DEADMAGE_API APlayerCharacter : public ACharacterBase, public IPlayerCharacterInterface
@@ -69,6 +69,10 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Player|InputActions")
 	TObjectPtr<UInputAction> IA_Dash;
 	// End of input actions and mapping
+
+	// Player attributes
+	UPROPERTY(Transient)
+	TObjectPtr<UPlayerAttributeSet> PlayerAttributes;
 	
 	// Input callback functions
 	void MovementAction(const FInputActionValue& Value);

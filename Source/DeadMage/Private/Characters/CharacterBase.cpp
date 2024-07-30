@@ -89,7 +89,7 @@ void ACharacterBase::ApplyStartupEffects()
 
 bool ACharacterBase::ApplyGameplayEffectsToSelf(const TSubclassOf<UGameplayEffect>& Effect, const FGameplayEffectContextHandle& InEffectContext)
 {
-	const FGameplayEffectSpecHandle SpecHandle = AbilitySystem->MakeOutgoingSpec(Effect, 1, InEffectContext);
+	const FGameplayEffectSpecHandle SpecHandle = AbilitySystem->MakeOutgoingSpec(Effect, DEFAULT_EFFECT_LEVEL, InEffectContext);
 	if (SpecHandle.IsValid())
 	{
 		const FActiveGameplayEffectHandle ActiveGEHandle = AbilitySystem->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());

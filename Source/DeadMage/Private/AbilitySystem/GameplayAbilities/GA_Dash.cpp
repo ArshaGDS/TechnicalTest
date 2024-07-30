@@ -1,7 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "AbilitySystem/GameplayAbility/GA_Dash.h"
+#include "AbilitySystem/GameplayAbilities/GA_Dash.h"
 
 #include "Characters/PlayerCharacter.h"
 #include "Interfaces/PlayerCharacterInterface.h"
