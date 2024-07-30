@@ -6,6 +6,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Camera/CameraComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
 APlayerCharacter::APlayerCharacter()
@@ -16,12 +17,21 @@ APlayerCharacter::APlayerCharacter()
 	if (SpringArm)
 	{
 		SpringArm->SetupAttachment(RootComponent);
+		SpringArm->bInheritYaw   = false;
+		SpringArm->bInheritPitch = false;
+		SpringArm->bInheritRoll  = false;
 	}
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	if (Camera)
 	{
 		Camera->SetupAttachment(SpringArm);
+	}
+
+	if (GetCharacterMovement())
+	{
+		GetCharacterMovement()->bOrientRotationToMovement = true;
+		GetCharacterMovement()->bIgnoreBaseRotation = true;
 	}
 }
 
@@ -61,8 +71,6 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void APlayerCharacter::MovementAction(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp, Error, TEXT("[%hs]"), __FUNCTION__);
-	
 	if (Controller)
 	{
 		MovementVector = Value.Get<FVector2D>();
@@ -75,7 +83,6 @@ void APlayerCharacter::MovementAction(const FInputActionValue& Value)
 		
 		AddMovementInput(ForwardDirection, MovementVector.Y);
 		AddMovementInput(RightDirection, MovementVector.X);
-		
 	}
 }
 
@@ -86,7 +93,8 @@ void APlayerCharacter::AttackAction(const FInputActionValue& Value)
 
 void APlayerCharacter::DashAction(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp, Error, TEXT("[%hs]"), __FUNCTION__);
+	const FVector DashVector = GetActorForwardVector() * 1000.f;
+	LaunchCharacter(DashVector, true, false);
 }
 
 void APlayerCharacter::SetInputMappingContext() const
