@@ -20,7 +20,7 @@ class DEADMAGE_API UDummyOverheadWidget : public UUserWidget, public IDummyWidge
 public:
 
 	UPROPERTY(meta=(BindWidget))
-	UProgressBar* Healthbar;
+	UProgressBar* HealthBar;
 
 	/*
 	 *  Update healthbar
@@ -33,5 +33,6 @@ public:
 
 protected:
 	
+	virtual bool Initialize() override;
 	virtual void NativeDestruct() override;
 };

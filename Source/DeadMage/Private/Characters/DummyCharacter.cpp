@@ -13,7 +13,7 @@ ADummyCharacter::ADummyCharacter()
 
 	Attributes = CreateDefaultSubobject<UDummyAttributeSet>(TEXT("Attributes"));
 	
-	OverheadWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Healthbar"));
+	OverheadWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthBar"));
 	if (OverheadWidget)
 	{
 		OverheadWidget->SetupAttachment(RootComponent);
@@ -31,10 +31,9 @@ void ADummyCharacter::OnHealthAttributeChanged(const FOnAttributeChangeData& Dat
 {
 	if (Data.NewValue < 0) return;
 
-	if (OverheadWidget && OverheadWidget->GetWidgetClass() && OverheadWidget->GetWidgetClass() )
+	if (OverheadWidget && OverheadWidget->GetWidget() && OverheadWidget->GetWidget()->Implements<UDummyWidgetInterface>() )
 	{
-		OverheadWidget->GetWidgetClass()
-		IDummyWidgetInterface::Execute_SetHealthPercent();
+		float Health = Data.NewValue / Attributes->GetDummyMaxHealth();
+		IDummyWidgetInterface::Execute_SetHealthPercent(OverheadWidget->GetWidget(), Health);
 	}
 }
-

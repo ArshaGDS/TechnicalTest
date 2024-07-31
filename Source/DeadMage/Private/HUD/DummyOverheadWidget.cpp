@@ -2,12 +2,17 @@
 
 
 #include "HUD/DummyOverheadWidget.h"
-
 #include "Components/ProgressBar.h"
+
+bool UDummyOverheadWidget::Initialize()
+{
+	SetVisibility(ESlateVisibility::Hidden);
+	return Super::Initialize();
+}
 
 void UDummyOverheadWidget::SetHealthPercent(const float& NewHealth) const
 {
-	Healthbar->SetPercent( FMath::Clamp(NewHealth, MIN_HEALTH , MAX_HEALTH) );
+	HealthBar->SetPercent( FMath::Clamp(NewHealth, MIN_HEALTH , MAX_HEALTH) );
 }
 
 // Interface
