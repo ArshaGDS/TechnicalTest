@@ -45,6 +45,8 @@ public:
 	virtual void BeginPlay() override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	FORCEINLINE uint8 GetComboAttackNumber() const { return ComboAttackNumber; }
+
 private:
 
 	// Cache movement variables
@@ -61,8 +63,8 @@ private:
 	// Cache Attack cycle
 	double LastAttackSecond { 0.0 };
 
-	// Cache attack combo
-	uint8 AttackCombo { 0 };
+	// Cache combo attack number
+	uint8 ComboAttackNumber { 0 };
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Player|ComboSystem")
 	uint8 MaxComboAttack { 3 };

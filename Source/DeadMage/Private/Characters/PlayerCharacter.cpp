@@ -97,43 +97,20 @@ void APlayerCharacter::AttackAction(const FInputActionValue& Value)
 	{
 		// Reset the cycle
 		ResetTheComboCycle();
-		
-		GEngine->AddOnScreenDebugMessage (
-			1,
-			1.0,
-			FColor::Red,
-			FString::Printf(TEXT("Reset the cycle, Combo count: %i"), AttackCombo)
-		);
 	}
 
-	AttackCombo++;
-	if (AttackCombo >= FIRST_ATTACK && AttackCombo < MaxComboAttack)
-	{
+	ComboAttackNumber++;
 
-		GEngine->AddOnScreenDebugMessage (
-			1,
-			1.0,
-			FColor::Red,
-			FString::Printf(TEXT("Combo count: %i"), AttackCombo)
-		);
-	}
-	else if (AttackCombo >= MaxComboAttack)
-	{
-		// Reset the cycle
-		// Finisher attack
-		ResetTheComboCycle();
-		
-		GEngine->AddOnScreenDebugMessage (
-				1,
-				1.0,
-				FColor::Red,
-				FString::Printf(TEXT("Finisher, Reset the cycle, Combo count: %i"), AttackCombo)
-			);
-	}
-
+	// Save current game second for next cycle
 	LastAttackSecond = CurrentGameSecond;
 	
 	SendGameplayEventToActor(this, AttackAbilityTag);
+	
+	if (ComboAttackNumber >= MaxComboAttack)
+	{
+		// Reset the cycle
+		ResetTheComboCycle();
+	}
 }
 
 void APlayerCharacter::DashAction(const FInputActionValue& Value)
@@ -170,7 +147,7 @@ APlayerCharacter* APlayerCharacter::GetPlayerCharacter_Implementation()
 void APlayerCharacter::ResetTheComboCycle()
 {
 	LastAttackSecond = 0;
-	AttackCombo = 0;
+	ComboAttackNumber = 0;
 }
 
 

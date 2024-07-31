@@ -10,7 +10,10 @@
 ACharacterBase::ACharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = false;
+	
 	bReplicates = true;
+	MinNetUpdateFrequency = 33;
+	NetUpdateFrequency = 100;
 	
 	AbilitySystem = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComp"));
 	if (AbilitySystem)

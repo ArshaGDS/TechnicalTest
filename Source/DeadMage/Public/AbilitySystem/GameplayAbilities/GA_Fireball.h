@@ -11,9 +11,24 @@ UCLASS()
 class DEADMAGE_API UGA_Fireball : public UGameplayAbility
 {
 	GENERATED_BODY()
-
+	
+	uint8 Counter { 0 };
+	
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
 		const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
+	
+	void PerformAttack();
 
-	uint8 Counter { 0 };
+protected:
+
+	// Name of the related section anim attack in anim montage
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "FireballAttack|Animation")
+	TArray<FName> AnimSectionNames;
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	uint8 GetComboAttackNumber();
+
+private:
+	
+	uint8 ComboAttackNumber { 0 };
 };

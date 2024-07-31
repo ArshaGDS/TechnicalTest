@@ -17,8 +17,6 @@ void UGA_Dash::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FG
 		APlayerCharacter* PlayerCharacter = IPlayerCharacterInterface::Execute_GetPlayerCharacter(AvatarActor);
 		PerformDash(PlayerCharacter);
 	}
-	
-	EndAbility(Handle, ActorInfo, ActivationInfo, true, false);
 }
 
 void UGA_Dash::PerformDash(APlayerCharacter* PlayerCharacter) const
