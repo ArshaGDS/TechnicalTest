@@ -92,6 +92,47 @@ void APlayerCharacter::MovementAction(const FInputActionValue& Value)
 
 void APlayerCharacter::AttackAction(const FInputActionValue& Value)
 {
+	const double CurrentGameSecond = GetWorld()->GetTimeSeconds();
+	if (CurrentGameSecond - LastAttackSecond > MaxDelayBetweenAttacks)
+	{
+		// Reset the cycle
+		ResetTheComboCycle();
+		
+		GEngine->AddOnScreenDebugMessage (
+			1,
+			1.0,
+			FColor::Red,
+			FString::Printf(TEXT("Reset the cycle, Combo count: %i"), AttackCombo)
+		);
+	}
+
+	AttackCombo++;
+	if (AttackCombo >= FIRST_ATTACK && AttackCombo < MaxComboAttack)
+	{
+
+		GEngine->AddOnScreenDebugMessage (
+			1,
+			1.0,
+			FColor::Red,
+			FString::Printf(TEXT("Combo count: %i"), AttackCombo)
+		);
+	}
+	else if (AttackCombo >= MaxComboAttack)
+	{
+		// Reset the cycle
+		// Finisher attack
+		ResetTheComboCycle();
+		
+		GEngine->AddOnScreenDebugMessage (
+				1,
+				1.0,
+				FColor::Red,
+				FString::Printf(TEXT("Finisher, Reset the cycle, Combo count: %i"), AttackCombo)
+			);
+	}
+
+	LastAttackSecond = CurrentGameSecond;
+	
 	SendGameplayEventToActor(this, AttackAbilityTag);
 }
 
@@ -124,6 +165,12 @@ void APlayerCharacter::SetInputMappingContext() const
 APlayerCharacter* APlayerCharacter::GetPlayerCharacter_Implementation()
 {
 	return this;
+}
+
+void APlayerCharacter::ResetTheComboCycle()
+{
+	LastAttackSecond = 0;
+	AttackCombo = 0;
 }
 
 

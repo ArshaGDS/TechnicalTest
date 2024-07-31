@@ -17,6 +17,7 @@ class UInputAction;
 
 // To avoid the magic number
 #define PRIORITY_0 0
+#define FIRST_ATTACK 1
 
 UCLASS()
 class DEADMAGE_API APlayerCharacter : public ACharacterBase, public IPlayerCharacterInterface
@@ -56,6 +57,20 @@ private:
 	FVector RightDirection;
 	// End of cache movement variables
 
+	// Combo system
+	// Cache Attack cycle
+	double LastAttackSecond { 0.0 };
+
+	// Cache attack combo
+	uint8 AttackCombo { 0 };
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Player|ComboSystem")
+	uint8 MaxComboAttack { 3 };
+
+	UPROPERTY(EditDefaultsOnly, Category = "Player|ComboSystem")
+	float MaxDelayBetweenAttacks { 1.0 };
+	// End of combo system
+
 	// Input actions and mapping
 	UPROPERTY(EditDefaultsOnly, Category = "Player|InputActions")
 	TObjectPtr<UInputMappingContext> PlayerMappingContext;
@@ -85,5 +100,9 @@ private:
 
 	// Interface
 	virtual APlayerCharacter* GetPlayerCharacter_Implementation() override;
+
+	// Combo functions
+	void ResetTheComboCycle();
+	// End of combo functions
 
 };
