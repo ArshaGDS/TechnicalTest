@@ -31,7 +31,10 @@ protected:
 	
 	void SendGameplayEventToActor(ACharacterBase* Character, const FGameplayTag EventTag);
 	bool ApplyGameplayEffectsToSelf(const TSubclassOf<UGameplayEffect>& Effect,
-	                                const FGameplayEffectContextHandle& InEffectContext);
+									const FGameplayEffectContextHandle& InEffectContext);
+
+	virtual void PossessedBy(AController* NewController) override;
+	virtual void OnRep_PlayerState() override;
 	
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystem;
@@ -40,10 +43,7 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Player|DataAssets")
 	TObjectPtr<UCharacterAbilitiesDataAsset> CharacterDataAsset;
-
-	virtual void PossessedBy(AController* NewController) override;
-	virtual void OnRep_PlayerState() override;
-
-	// Interface
+	
+	// Interfaces
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 };

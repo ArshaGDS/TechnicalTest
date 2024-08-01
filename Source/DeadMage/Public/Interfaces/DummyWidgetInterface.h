@@ -19,5 +19,5 @@ class DEADMAGE_API IDummyWidgetInterface
 public:
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interface|UI")
-	void SetHealthPercent(float& Health);
+	void SetHealthPercent(float Health);
 };

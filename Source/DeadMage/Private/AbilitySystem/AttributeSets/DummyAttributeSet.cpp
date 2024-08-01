@@ -20,16 +20,16 @@ void UDummyAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME_CONDITION_NOTIFY(ThisClass, DummyHealth, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(ThisClass, DummyMaxHealth, COND_None, REPNOTIFY_Always)
+	DOREPLIFETIME_CONDITION_NOTIFY(UDummyAttributeSet, DummyHealth, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UDummyAttributeSet, DummyMaxHealth, COND_None, REPNOTIFY_Always)
 }
 
 void UDummyAttributeSet::OnRep_DummyHealth(FGameplayAttributeData& OldDummyHealth)
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(ThisClass, DummyHealth, OldDummyHealth);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UDummyAttributeSet, DummyHealth, OldDummyHealth);
 }
 
 void UDummyAttributeSet::OnRep_DummyMaxHealth(FGameplayAttributeData& OldDummyMaxHealth)
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(ThisClass, DummyMaxHealth, OldDummyMaxHealth);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UDummyAttributeSet, DummyMaxHealth, OldDummyMaxHealth);
 }

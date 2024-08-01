@@ -10,13 +10,13 @@ bool UDummyOverheadWidget::Initialize()
 	return Super::Initialize();
 }
 
-void UDummyOverheadWidget::SetHealthPercent(const float& NewHealth) const
+void UDummyOverheadWidget::SetHealthPercent(const float NewHealth) const
 {
 	HealthBar->SetPercent( FMath::Clamp(NewHealth, MIN_HEALTH , MAX_HEALTH) );
 }
 
 // Interface
-void UDummyOverheadWidget::SetHealthPercent_Implementation(float& Health)
+void UDummyOverheadWidget::SetHealthPercent_Implementation(float Health)
 {
 	if (GetVisibility() != ESlateVisibility::Visible)
 	{

@@ -30,10 +30,10 @@ ADummyCharacter::ADummyCharacter()
 void ADummyCharacter::OnHealthAttributeChanged(const FOnAttributeChangeData& Data)
 {
 	if (Data.NewValue < 0) return;
-
-	if (OverheadWidget && OverheadWidget->GetWidget() && OverheadWidget->GetWidget()->Implements<UDummyWidgetInterface>() )
+	
+	if (OverheadWidget && OverheadWidget->GetWidget() && OverheadWidget->GetWidget()->Implements<UDummyWidgetInterface>())
 	{
-		float HealthPercent = Data.NewValue / Attributes->GetDummyMaxHealth();
+		const float HealthPercent = Data.NewValue / Attributes->GetDummyMaxHealth();
 		IDummyWidgetInterface::Execute_SetHealthPercent(OverheadWidget->GetWidget(), HealthPercent);
 	}
 }

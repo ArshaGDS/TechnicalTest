@@ -15,7 +15,7 @@ void UGA_Fireball::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 	
 }
 
-void UGA_Fireball::PerformAttack(const FName SpawnSocketName)
+void UGA_Fireball::PerformAttack()
 {
 	AActor* AvatarActor = GetAvatarActorFromActorInfo();
 	if (AvatarActor && AvatarActor->Implements<UPlayerCharacterInterface>())
@@ -27,12 +27,16 @@ void UGA_Fireball::PerformAttack(const FName SpawnSocketName)
 		Transform.SetLocation(Player->GetActorLocation());
 		Player->ObjectPoolComponent->SpawnActorFromPool(Transform);*/
 		
+		FTransform SpawnTransform = Player->GetActorTransform();
+		const FVector Location = Player->GetActorLocation() + (Player->GetActorForwardVector() * 100);
+		SpawnTransform.SetLocation(Location);
+		
 		AFireballProjectile* FireballProjectile = GetWorld()->SpawnActorDeferred<AFireballProjectile>(PooledActorClass,
-			   Player->GetActorTransform(), GetAvatarActorFromActorInfo(), nullptr, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+			   SpawnTransform, GetAvatarActorFromActorInfo(), nullptr, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 		
 		if (FireballProjectile)
 		{
-			FireballProjectile->FinishSpawning(Player->GetActorTransform());
+			FireballProjectile->FinishSpawning(SpawnTransform);
 		}
 	}
 	else

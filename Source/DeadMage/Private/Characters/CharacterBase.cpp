@@ -88,6 +88,10 @@ void ACharacterBase::ApplyStartupEffects()
 			ApplyGameplayEffectsToSelf(Effect, EffectContext);
 		}
 	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("[%hs] Can't initial startup effects"), __FUNCTION__);
+	}
 }
 
 bool ACharacterBase::ApplyGameplayEffectsToSelf(const TSubclassOf<UGameplayEffect>& Effect, const FGameplayEffectContextHandle& InEffectContext)

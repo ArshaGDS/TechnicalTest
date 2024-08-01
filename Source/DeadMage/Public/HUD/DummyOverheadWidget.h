@@ -26,10 +26,10 @@ public:
 	 *  Update healthbar
 	 *  @params NewHealth: A float number between 0 and 1
 	 */
-	void SetHealthPercent(const float& NewHealth) const;
+	void SetHealthPercent(const float NewHealth) const;
 	
 	// Interface
-	virtual void SetHealthPercent_Implementation(float& Health) override;
+	virtual void SetHealthPercent_Implementation(float Health) override;
 
 protected:
 	

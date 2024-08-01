@@ -3,6 +3,10 @@
 
 #include "Actors/FireballProjectile.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemInterface.h"
+#include "AbilitySystemComponent.h"
+#include "AbilitySystemLog.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
@@ -56,5 +60,39 @@ void AFireballProjectile::OnOverlap(UPrimitiveComponent* OverlappedComponent, AA
 	//SetInUse(false);
 
 	// Apply damage on overlapped actor
-	UE_LOG(LogTemp, Display, TEXT("[%hs]"), __FUNCTION__);
+	ApplyDamageEffectOnHitedActor(OtherActor);
+}
+
+void AFireballProjectile::ApplyDamageEffectOnHitedActor(AActor* HitedActor)
+{
+	if (HitedActor && HitedActor->Implements<UAbilitySystemInterface>())
+	{
+		UAbilitySystemComponent* AbilitySystem = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(HitedActor);
+		ApplyEffectsToActor(AbilitySystem, DamageEffects);
+		Destroy();
+	}
+}
+
+FGameplayEffectContextHandle AFireballProjectile::ApplyEffectsToActor(UAbilitySystemComponent* TargetAbilitySystemComponent,
+	TArray<TSubclassOf<UGameplayEffect>>& Effects) const
+{
+	const FGameplayEffectContextHandle EffectContext = TargetAbilitySystemComponent->MakeEffectContext();
+	
+	for (TSubclassOf<UGameplayEffect> GameplayEffect : Effects)
+	{
+		if (!GameplayEffect.Get()) continue;
+
+		FGameplayEffectSpecHandle SpecHandle = TargetAbilitySystemComponent->MakeOutgoingSpec(GameplayEffect, 1, EffectContext);
+		if (SpecHandle.IsValid())
+		{
+			const bool bWasSuccessful = TargetAbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get()).WasSuccessfullyApplied();
+
+			if (!bWasSuccessful)
+			{
+				ABILITY_LOG(Log, TEXT("[Gamelay ability base] ActivateAbility: Ability %s failed to apply startup effect %s."), *GetName(), *GetNameSafe(GameplayEffect));
+			}
+		}
+	}
+
+	return EffectContext;
 }

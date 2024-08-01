@@ -32,7 +32,7 @@ protected:
 	uint8 GetComboAttackNumber();
 
 	UFUNCTION(BlueprintCallable)
-	void PerformAttack(const FName SpawnSocketName);
+	void PerformAttack();
 
 private:
 	
