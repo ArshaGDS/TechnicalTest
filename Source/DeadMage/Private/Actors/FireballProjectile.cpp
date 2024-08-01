@@ -68,31 +68,35 @@ void AFireballProjectile::ApplyDamageEffectOnHitedActor(AActor* HitedActor)
 	if (HitedActor && HitedActor->Implements<UAbilitySystemInterface>())
 	{
 		UAbilitySystemComponent* AbilitySystem = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(HitedActor);
-		ApplyEffectsToActor(AbilitySystem, DamageEffects);
+
+		if (bIsFinisher)
+		{
+			ApplyEffectsToActor(AbilitySystem, FinisherDamageEffect);
+		}
+		else
+		{
+			ApplyEffectsToActor(AbilitySystem, DamageEffect);
+		}
 		Destroy();
 	}
 }
 
 FGameplayEffectContextHandle AFireballProjectile::ApplyEffectsToActor(UAbilitySystemComponent* TargetAbilitySystemComponent,
-	TArray<TSubclassOf<UGameplayEffect>>& Effects) const
+                                                                      const TSubclassOf<UGameplayEffect>& Effect) const
 {
 	const FGameplayEffectContextHandle EffectContext = TargetAbilitySystemComponent->MakeEffectContext();
-	
-	for (TSubclassOf<UGameplayEffect> GameplayEffect : Effects)
+
+	const FGameplayEffectSpecHandle SpecHandle = TargetAbilitySystemComponent->MakeOutgoingSpec(Effect, 1, EffectContext);
+	if (SpecHandle.IsValid())
 	{
-		if (!GameplayEffect.Get()) continue;
+		const bool bWasSuccessful = TargetAbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get()).WasSuccessfullyApplied();
 
-		FGameplayEffectSpecHandle SpecHandle = TargetAbilitySystemComponent->MakeOutgoingSpec(GameplayEffect, 1, EffectContext);
-		if (SpecHandle.IsValid())
+		if (!bWasSuccessful)
 		{
-			const bool bWasSuccessful = TargetAbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get()).WasSuccessfullyApplied();
-
-			if (!bWasSuccessful)
-			{
-				ABILITY_LOG(Log, TEXT("[Gamelay ability base] ActivateAbility: Ability %s failed to apply startup effect %s."), *GetName(), *GetNameSafe(GameplayEffect));
-			}
+			ABILITY_LOG(Log, TEXT("[Gamelay ability base] ActivateAbility: Ability %s failed to apply startup effect %s."), *GetName(), *GetNameSafe(Effect));
 		}
 	}
+	
 
 	return EffectContext;
 }

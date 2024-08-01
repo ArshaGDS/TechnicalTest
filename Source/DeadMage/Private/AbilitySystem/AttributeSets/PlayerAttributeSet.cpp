@@ -13,6 +13,10 @@ void UPlayerAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCall
 	if (Data.EvaluatedData.Attribute == GetPlayerHealthAttribute())
 	{
 		SetPlayerHealth(FMath::Clamp(GetPlayerHealth(), 0.f, GetPlayerMaxHealth()));
+	}
+
+	if (Data.EvaluatedData.Attribute == GetPlayerArcanaAttribute())
+	{
 		SetPlayerArcana(FMath::Clamp(GetPlayerArcana(), 0.f, GetPlayerMaxArcana()));
 	}
 }

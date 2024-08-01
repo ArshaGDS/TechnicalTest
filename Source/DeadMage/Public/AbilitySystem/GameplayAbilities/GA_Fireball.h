@@ -60,6 +60,6 @@ private:
 	UPROPERTY()
 	TObjectPtr<APlayerCharacter> PlayerCharacterPtr { nullptr };
 
-	void SpawnProjectile();
+	void SpawnProjectile(const bool IsFinisher);
 	void FinisherTimer();
 };

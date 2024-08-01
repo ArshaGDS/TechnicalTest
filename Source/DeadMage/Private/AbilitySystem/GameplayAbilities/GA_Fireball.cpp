@@ -34,9 +34,10 @@ void UGA_Fireball::PerformAttack()
 {
 	if (!IsFinisherAttack())
 	{
-		SpawnProjectile();
+		SpawnProjectile(false);
 		const uint8 AnimSectionNameIndex = GetPlayer()->GetComboAttackNumber() - 1;
 		K2_PlayAttackMontage(AnimSectionNames[ AnimSectionNameIndex ]);
+		K2_CommitAbilityCost();
 		K2_EndAbility();
 	}
 	else
@@ -52,7 +53,7 @@ void UGA_Fireball::PerformAttack()
 	}
 }
 
-void UGA_Fireball::SpawnProjectile()
+void UGA_Fireball::SpawnProjectile(const bool IsFinisher)
 {
 	FTransform SpawnTransform = GetPlayer()->GetActorTransform();
 	const FVector Location = GetPlayer()->GetActorLocation() + (GetPlayer()->GetActorForwardVector() * 100);
@@ -60,9 +61,10 @@ void UGA_Fireball::SpawnProjectile()
 		
 	AFireballProjectile* FireballProjectile = GetWorld()->SpawnActorDeferred<AFireballProjectile>(PooledActorClass,
 		   SpawnTransform, GetAvatarActorFromActorInfo(), nullptr, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
-		
+	
 	if (FireballProjectile)
 	{
+		FireballProjectile->SetIsFinisher(IsFinisher);
 		FireballProjectile->FinishSpawning(SpawnTransform);
 	}
 }
@@ -72,7 +74,9 @@ void UGA_Fireball::FinisherTimer()
 	GetWorld()->GetTimerManager().PauseTimer(FinisherTimerHandle);
 	FinisherTimerHandle.Invalidate();
 	K2_PlayAttackMontage( AnimSectionNames.Last() );
-	SpawnProjectile();
+	SpawnProjectile(true);
+	K2_CommitAbilityCost();
+	K2_CommitAbilityCooldown();
 	K2_EndAbility();
 	// Cycle is ended
 }

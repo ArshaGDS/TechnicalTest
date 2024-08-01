@@ -95,6 +95,9 @@ void APlayerCharacter::MovementAction(const FInputActionValue& Value)
 
 void APlayerCharacter::AttackAction(const FInputActionValue& Value)
 {
+	// Not enough Arcana
+	if (!PlayerAttributes->GetPlayerArcana()) return;
+	
 	const double CurrentGameSecond = GetWorld()->GetTimeSeconds();
 	if (CurrentGameSecond - LastAttackSecond > MaxDelayBetweenAttacks)
 	{

@@ -21,6 +21,8 @@ public:
 
 	AFireballProjectile();
 
+	FORCEINLINE void SetIsFinisher(const bool bFinisher) { bIsFinisher = bFinisher; }
+
 protected:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
@@ -33,7 +35,11 @@ protected:
 	float FireballVelocity { 700.f };
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Fireball|Damage")
-	TArray<TSubclassOf<UGameplayEffect>> DamageEffects;
+	TSubclassOf<UGameplayEffect> DamageEffect;
+
+	// Finisher damage
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Fireball|Damage")
+	TSubclassOf<UGameplayEffect> FinisherDamageEffect;
 	
 	virtual void BeginPlay() override;
 
@@ -48,5 +54,7 @@ private:
 	void ApplyDamageEffectOnHitedActor(AActor* HitedActor);
 	
 	FGameplayEffectContextHandle ApplyEffectsToActor(UAbilitySystemComponent* TargetAbilitySystemComponent,
-		TArray<TSubclassOf<UGameplayEffect>>& Effects) const;
+	                                                 const TSubclassOf<UGameplayEffect>& Effect) const;
+
+	bool bIsFinisher { false };
 };
