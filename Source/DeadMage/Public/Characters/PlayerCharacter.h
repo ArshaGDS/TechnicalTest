@@ -50,6 +50,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	FORCEINLINE uint8 GetComboAttackNumber() const { return ComboAttackNumber; }
+	FORCEINLINE uint8 GetMaxComboAttack() const { return MaxComboAttack; }
 
 private:
 
@@ -74,7 +75,7 @@ private:
 	uint8 MaxComboAttack { 3 };
 
 	UPROPERTY(EditDefaultsOnly, Category = "Player|ComboSystem")
-	float MaxDelayBetweenAttacks { 1.0 };
+	float MaxDelayBetweenAttacks { 1.3 };
 	// End of combo system
 
 	// Input actions and mapping

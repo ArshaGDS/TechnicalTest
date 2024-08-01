@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Abilities/GameplayAbility.h"
+#include "Characters/PlayerCharacter.h"
 #include "GA_Fireball.generated.h"
 
 
@@ -21,6 +22,12 @@ class DEADMAGE_API UGA_Fireball : public UGameplayAbility
 
 protected:
 
+	UPROPERTY(EditDefaultsOnly, Category = "FireballAttack")
+	float FinisherDelay { 1.3f };
+
+	UPROPERTY(EditDefaultsOnly, Category = "FireballAttack")
+	FName StartFinisherSectionName {};
+	
 	// Name of the related section anim attack in anim montage
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "FireballAttack|Animation")
 	TArray<FName> AnimSectionNames;
@@ -32,9 +39,26 @@ protected:
 	uint8 GetComboAttackNumber();
 
 	UFUNCTION(BlueprintCallable)
+	APlayerCharacter* GetPlayer();
+	
+	UFUNCTION(BlueprintCallable)
+	bool IsFinisherAttack();
+
+	UFUNCTION(BlueprintCallable)
 	void PerformAttack();
+	
+	UFUNCTION(BlueprintImplementableEvent, Category = "FireballAttack|Animation", DisplayName = "PlayAttackMontage", meta=(ScriptName = "PlayAttackMontage"))
+	void K2_PlayAttackMontage(FName AnimSectionName);
 
 private:
+
+	FTimerHandle FinisherTimerHandle;
 	
 	uint8 ComboAttackNumber { 0 };
+
+	UPROPERTY()
+	TObjectPtr<APlayerCharacter> PlayerCharacterPtr { nullptr };
+
+	void SpawnProjectile();
+	void FinisherTimer();
 };

@@ -6,57 +6,84 @@
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Actors/FireballProjectile.h"
 #include "Characters/PlayerCharacter.h"
-#include "Characters/Components/ObjectPool.h"
 
 void UGA_Fireball::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
                                    const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+
+	PerformAttack();
+}
+
+APlayerCharacter* UGA_Fireball::GetPlayer()
+{
+	if (PlayerCharacterPtr) return PlayerCharacterPtr;
 	
+	AActor* AvatarActor = GetAvatarActorFromActorInfo();
+	if (AvatarActor && AvatarActor->Implements<UPlayerCharacterInterface>())
+	{
+		PlayerCharacterPtr = IPlayerCharacterInterface::Execute_GetPlayerCharacter(AvatarActor);
+
+		return PlayerCharacterPtr;
+	}
+
+	return nullptr;
 }
 
 void UGA_Fireball::PerformAttack()
 {
-	AActor* AvatarActor = GetAvatarActorFromActorInfo();
-	if (AvatarActor && AvatarActor->Implements<UPlayerCharacterInterface>())
+	if (!IsFinisherAttack())
 	{
-		const APlayerCharacter* Player = IPlayerCharacterInterface::Execute_GetPlayerCharacter(AvatarActor);
-		
-		//Player->ObjectPoolComponent->SpawnActorFromPool(Player->GetMesh()->GetSocketTransform(SpawnSocketName));
-		/*FTransform Transform;
-		Transform.SetLocation(Player->GetActorLocation());
-		Player->ObjectPoolComponent->SpawnActorFromPool(Transform);*/
-		
-		FTransform SpawnTransform = Player->GetActorTransform();
-		const FVector Location = Player->GetActorLocation() + (Player->GetActorForwardVector() * 100);
-		SpawnTransform.SetLocation(Location);
-		
-		AFireballProjectile* FireballProjectile = GetWorld()->SpawnActorDeferred<AFireballProjectile>(PooledActorClass,
-			   SpawnTransform, GetAvatarActorFromActorInfo(), nullptr, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
-		
-		if (FireballProjectile)
-		{
-			FireballProjectile->FinishSpawning(SpawnTransform);
-		}
+		SpawnProjectile();
+		const uint8 AnimSectionNameIndex = GetPlayer()->GetComboAttackNumber() - 1;
+		K2_PlayAttackMontage(AnimSectionNames[ AnimSectionNameIndex ]);
+		K2_EndAbility();
 	}
 	else
 	{
-		UE_LOG(LogTemp, Error, TEXT("[%hs]"), __FUNCTION__);
+		if (GetWorld())
+		{
+			// Start finisher part of cycle
+			const uint8 FinisherPart1Index = AnimSectionNames.Num() - 2;
+			K2_PlayAttackMontage( AnimSectionNames[FinisherPart1Index] );
+			// Delay for charging attack
+			GetWorld()->GetTimerManager().SetTimer(FinisherTimerHandle, this, &UGA_Fireball::FinisherTimer, FinisherDelay);
+		}
 	}
+}
+
+void UGA_Fireball::SpawnProjectile()
+{
+	FTransform SpawnTransform = GetPlayer()->GetActorTransform();
+	const FVector Location = GetPlayer()->GetActorLocation() + (GetPlayer()->GetActorForwardVector() * 100);
+	SpawnTransform.SetLocation(Location);
+		
+	AFireballProjectile* FireballProjectile = GetWorld()->SpawnActorDeferred<AFireballProjectile>(PooledActorClass,
+		   SpawnTransform, GetAvatarActorFromActorInfo(), nullptr, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+		
+	if (FireballProjectile)
+	{
+		FireballProjectile->FinishSpawning(SpawnTransform);
+	}
+}
+
+void UGA_Fireball::FinisherTimer()
+{
+	GetWorld()->GetTimerManager().PauseTimer(FinisherTimerHandle);
+	FinisherTimerHandle.Invalidate();
+	K2_PlayAttackMontage( AnimSectionNames.Last() );
+	SpawnProjectile();
+	K2_EndAbility();
+	// Cycle is ended
 }
 
 uint8 UGA_Fireball::GetComboAttackNumber()
 {
-	AActor* AvatarActor = GetAvatarActorFromActorInfo();
-	if (AvatarActor && AvatarActor->Implements<UPlayerCharacterInterface>())
-	{
-		const APlayerCharacter* Player = IPlayerCharacterInterface::Execute_GetPlayerCharacter(AvatarActor);
-		
-		// Get attack state
-		ComboAttackNumber = Player->GetComboAttackNumber();
-		
-		return ComboAttackNumber;
-	}
-
+	ComboAttackNumber = GetPlayer()->GetComboAttackNumber();
 	return ComboAttackNumber;
+}
+
+bool UGA_Fireball::IsFinisherAttack()
+{
+	return GetPlayer()->GetMaxComboAttack() == GetPlayer()->GetComboAttackNumber();
 }
