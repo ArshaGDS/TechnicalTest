@@ -26,6 +26,9 @@ private:
 	// Player attributes
 	UPROPERTY(Transient)
 	TObjectPtr<UDummyAttributeSet> Attributes;
+
+	// Hide dummy when health reaches 0
+	void DisableDummy();
 	
 	// Delegate callback function
 	void OnHealthAttributeChanged(const FOnAttributeChangeData& Data);

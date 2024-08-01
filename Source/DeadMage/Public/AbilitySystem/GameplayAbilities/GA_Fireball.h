@@ -46,7 +46,8 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void PerformAttack();
-	
+
+	// Trigger in blueprint child class to play animation 
 	UFUNCTION(BlueprintImplementableEvent, Category = "FireballAttack|Animation", DisplayName = "PlayAttackMontage", meta=(ScriptName = "PlayAttackMontage"))
 	void K2_PlayAttackMontage(FName AnimSectionName);
 
