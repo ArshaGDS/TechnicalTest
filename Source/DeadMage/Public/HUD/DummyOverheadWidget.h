@@ -7,6 +7,7 @@
 #include "Interfaces/DummyWidgetInterface.h"
 #include "DummyOverheadWidget.generated.h"
 
+class UTextBlock;
 class UProgressBar;
 
 #define MIN_HEALTH 0 
@@ -20,19 +21,27 @@ class DEADMAGE_API UDummyOverheadWidget : public UUserWidget, public IDummyWidge
 public:
 
 	UPROPERTY(meta=(BindWidget))
-	UProgressBar* HealthBar;
+	TObjectPtr<UProgressBar> HealthBar;
+
+	UPROPERTY(meta=(BindWidget))
+	TObjectPtr<UTextBlock> DamageAmount;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Animation")
+	TObjectPtr<UWidgetAnimation> RefDamageAmountAnimation;
 
 	/*
 	 *  Update healthbar
-	 *  @params NewHealth: A float number between 0 and 1
+	 *  @param NewHealth: A float number between 0 and 1
 	 */
 	void SetHealthPercent(const float NewHealth) const;
-	
+
 	// Interface
-	virtual void SetHealthPercent_Implementation(float Health) override;
+	virtual void SetHealthPercent_Implementation(float Health, float AppliedDamage) override;
 
 protected:
 	
 	virtual bool Initialize() override;
 	virtual void NativeDestruct() override;
+	
+	void ShowDamageNumber(float AppliedDamage);
 };

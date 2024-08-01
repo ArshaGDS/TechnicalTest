@@ -3,20 +3,10 @@
 
 #include "HUD/DummyOverheadWidget.h"
 #include "Components/ProgressBar.h"
-
-bool UDummyOverheadWidget::Initialize()
-{
-	SetVisibility(ESlateVisibility::Hidden);
-	return Super::Initialize();
-}
-
-void UDummyOverheadWidget::SetHealthPercent(const float NewHealth) const
-{
-	HealthBar->SetPercent( FMath::Clamp(NewHealth, MIN_HEALTH , MAX_HEALTH) );
-}
+#include "Components/TextBlock.h"
 
 // Interface
-void UDummyOverheadWidget::SetHealthPercent_Implementation(float Health)
+void UDummyOverheadWidget::SetHealthPercent_Implementation(float Health, float AppliedDamage)
 {
 	if (GetVisibility() != ESlateVisibility::Visible)
 	{
@@ -24,10 +14,34 @@ void UDummyOverheadWidget::SetHealthPercent_Implementation(float Health)
 	}
 	
 	SetHealthPercent(Health);
+	ShowDamageNumber(AppliedDamage);
+}
+
+void UDummyOverheadWidget::SetHealthPercent(const float NewHealth) const
+{
+	HealthBar->SetPercent( FMath::Clamp(NewHealth, MIN_HEALTH , MAX_HEALTH) );
+}
+
+bool UDummyOverheadWidget::Initialize()
+{
+	SetVisibility(ESlateVisibility::Hidden);
+	return Super::Initialize();
 }
 
 void UDummyOverheadWidget::NativeDestruct()
 {
 	RemoveFromParent();
 	Super::NativeDestruct();
+}
+
+void UDummyOverheadWidget::ShowDamageNumber(float AppliedDamage)
+{
+	if (!IsPlayingAnimation())
+	{
+		DamageAmount->SetText(FText::AsNumber(AppliedDamage));
+		if (RefDamageAmountAnimation)
+		{
+			PlayAnimation(RefDamageAmountAnimation);
+		}
+	}
 }
