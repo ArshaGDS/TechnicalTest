@@ -46,7 +46,8 @@ protected:
 	UFUNCTION()
 	void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
 		bool bFromSweep, const FHitResult & SweepResult);
-	
+
+	// Called when the object is used, to handle its active or inactive state
 	virtual void OnInUse(const bool InUse) override;
 
 private:
@@ -56,5 +57,6 @@ private:
 	FGameplayEffectContextHandle ApplyEffectsToActor(UAbilitySystemComponent* TargetAbilitySystemComponent,
 	                                                 const TSubclassOf<UGameplayEffect>& Effect) const;
 
+	// Check if this is a finisher attack or not
 	bool bIsFinisher { false };
 };
