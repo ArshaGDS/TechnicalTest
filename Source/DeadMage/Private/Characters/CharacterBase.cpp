@@ -54,6 +54,12 @@ UAbilitySystemComponent* ACharacterBase::GetAbilitySystemComponent() const
 	return AbilitySystem;
 }
 
+// Interfaces
+ACharacterBase* ACharacterBase::GetCharacterBase_Implementation()
+{
+	return this;
+}
+
 void ACharacterBase::SendGameplayEventToActor(ACharacterBase* Character, const FGameplayTag EventTag)
 {
 	FGameplayEventData Payload;
