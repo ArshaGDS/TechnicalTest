@@ -8,21 +8,20 @@
 UObjectPool::UObjectPool()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-
 }
 
 void UObjectPool::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	InitializePool();
+
+	//InitializePool();
 }
 
 APooledActor* UObjectPool::FindFirstAvailableActor()
 {
-	for (uint8 Index = 0 ; Index < PoolSize ; Index++)
+	for (uint8 Index = 0 ; Index < ObjectPool.Num() ; Index++)
 	{
-		if (!ObjectPool[Index]->bInUse)
+		if (ObjectPool[Index]->IsValidLowLevel() && !ObjectPool[Index]->bInUse)
 		{
 			return ObjectPool[Index];
 		}
@@ -47,7 +46,7 @@ void UObjectPool::InitializePool()
 {
 	if (!GetWorld() || !GetOwner())
 	{
-		UE_LOG(LogTemp, Error, TEXT("[%hs] Initialization failed"), __FUNCTION__);
+		UE_LOG(LogTemp, Error, TEXT("[%hs] Pool initialization failed"), __FUNCTION__);
 		return;
 	}
 	
@@ -62,6 +61,7 @@ void UObjectPool::InitializePool()
 		
 		if (ObjectPool[Index])
 		{
+			// Finish spawn and set location at (0, 0, 0) in the world 
 			ObjectPool[Index]->FinishSpawning(FTransform());
 		}
 	}

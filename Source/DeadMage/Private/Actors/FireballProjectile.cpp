@@ -10,16 +10,34 @@ AFireballProjectile::AFireballProjectile()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
+	bReplicates = true;
+	MinNetUpdateFrequency = 33;
+	NetUpdateFrequency = 100;
+
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovComp"));
+	if (ProjectileMovementComponent)
+	{
+		ProjectileMovementComponent->ProjectileGravityScale = 0.f;
+		ProjectileMovementComponent->bInitialVelocityInLocalSpace = false;
+		ProjectileMovementComponent->bRotationFollowsVelocity = true;
+		ProjectileMovementComponent->bShouldBounce = false;
+		ProjectileMovementComponent->Bounciness = 0.f;
+		ProjectileMovementComponent->Velocity = FVector::ZeroVector;
+	}
+	
 	SphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollision"));
+	if (SphereCollision)
+	{
+		RootComponent = SphereCollision;
+	}
 }
 
-// Called when the game starts or when spawned
 void AFireballProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-
-	SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::AFireballProjectile::OnOverlap);	
+	
+	SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::AFireballProjectile::OnOverlap);
+	ProjectileMovementComponent->Velocity = GetActorForwardVector() * FireballVelocity;
 }
 
 void AFireballProjectile::OnInUse(const bool InUse)
@@ -28,12 +46,15 @@ void AFireballProjectile::OnInUse(const bool InUse)
 
 	if (ProjectileMovementComponent)
 	{
-		ProjectileMovementComponent->Velocity = InUse ? GetActorForwardVector() * FireballVelocity : FVector::ZeroVector ;
+		UE_LOG(LogTemp, Display, TEXT("[%hs], %i"), __FUNCTION__, InUse);
+		//ProjectileMovementComponent->Velocity = InUse ? GetActorForwardVector() * FireballVelocity : FVector::ZeroVector ;
 	}
 }
 
-void AFireballProjectile::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void AFireballProjectile::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	SetInUse(false);
+	//SetInUse(false);
+
+	// Apply damage on overlapped actor
+	UE_LOG(LogTemp, Display, TEXT("[%hs]"), __FUNCTION__);
 }

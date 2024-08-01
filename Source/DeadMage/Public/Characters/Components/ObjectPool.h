@@ -37,5 +37,6 @@ protected:
 
 private:
 
+	// Spawn pooled actors and cache in the pool 
 	void InitializePool();
 };

@@ -12,7 +12,7 @@ void APooledActor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SetInUse(false);
+	//SetInUse(false);
 }
 
 void APooledActor::SetInUse(const bool InUse)
@@ -24,6 +24,11 @@ void APooledActor::SetInUse(const bool InUse)
 	if (InUse && GetWorld())
 	{
 		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ThisClass::ReturnToPool, TimeToLive, false);
+	}
+
+	if (!InUse)
+	{
+		SetActorLocation(FVector::ZeroVector);
 	}
 
 	OnInUse(InUse);

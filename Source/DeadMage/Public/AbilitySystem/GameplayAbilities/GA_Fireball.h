@@ -7,6 +7,8 @@
 #include "GA_Fireball.generated.h"
 
 
+class APooledActor;
+
 UCLASS()
 class DEADMAGE_API UGA_Fireball : public UGameplayAbility
 {
@@ -22,6 +24,9 @@ protected:
 	// Name of the related section anim attack in anim montage
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "FireballAttack|Animation")
 	TArray<FName> AnimSectionNames;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "FireballAttack|Animation")
+	TSubclassOf<APooledActor> PooledActorClass;
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	uint8 GetComboAttackNumber();

@@ -25,7 +25,8 @@ public:
 protected:
 
 	virtual void BeginPlay() override;
-	
+
+	UFUNCTION(BlueprintCallable)
 	virtual void OnInUse(const bool InUse) {}
 
 private:
