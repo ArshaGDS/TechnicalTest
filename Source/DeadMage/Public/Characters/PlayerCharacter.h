@@ -9,6 +9,7 @@
 #include "Interfaces/PlayerCharacterInterface.h"
 #include "PlayerCharacter.generated.h"
 
+class UObjectPool;
 class UPlayerAttributeSet;
 class USpringArmComponent;
 class UCameraComponent;
@@ -31,6 +32,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<USpringArmComponent> SpringArm;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	TObjectPtr<UObjectPool> ObjectPoolComponent;
 
 	// Gameplay Tags
 	UPROPERTY(EditDefaultsOnly, Category = "Player|AbilityTags")

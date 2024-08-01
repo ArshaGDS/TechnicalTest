@@ -16,8 +16,6 @@ class DEADMAGE_API UGA_Fireball : public UGameplayAbility
 	
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
 		const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
-	
-	void PerformAttack();
 
 protected:
 
@@ -27,6 +25,9 @@ protected:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	uint8 GetComboAttackNumber();
+
+	UFUNCTION(BlueprintCallable)
+	void PerformAttack(const FName SpawnSocketName);
 
 private:
 	

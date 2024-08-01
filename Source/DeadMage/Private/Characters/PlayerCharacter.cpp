@@ -7,6 +7,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "AbilitySystem/AttributeSets/PlayerAttributeSet.h"
 #include "Camera/CameraComponent.h"
+#include "Characters/Components/ObjectPool.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
@@ -37,6 +38,8 @@ APlayerCharacter::APlayerCharacter()
 	}
 
 	PlayerAttributes = CreateDefaultSubobject<UPlayerAttributeSet>(TEXT("PlayerAttributeSet"));
+	
+	ObjectPoolComponent = CreateDefaultSubobject<UObjectPool>(TEXT("ObjectPoolComponent"));
 }
 
 void APlayerCharacter::BeginPlay()
