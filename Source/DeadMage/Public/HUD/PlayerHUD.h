@@ -17,7 +17,7 @@ class DEADMAGE_API APlayerHUD : public AHUD
 public:
 
 	UPROPERTY(EditAnywhere, Category = "PlayerHUD")
-	TSubclassOf<UUserWidget> CharacterOverlayClass;
+	TSubclassOf<UUserWidget> LevelOverlayClass;
 
 protected:
 

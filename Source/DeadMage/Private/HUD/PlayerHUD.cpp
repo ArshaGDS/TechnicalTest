@@ -14,10 +14,10 @@ void APlayerHUD::BeginPlay()
 
 void APlayerHUD::AddOverlay() const
 {
-	const APlayerController* PlayerController = GetOwningPlayerController();
-	if (PlayerController && CharacterOverlayClass)
+	APlayerController* PlayerController = GetOwningPlayerController();
+	if (PlayerController && LevelOverlayClass)
 	{
-		UUserWidget* CharacterOverlay = CreateWidget<UUserWidget>(PlayerController, CharacterOverlayClass);
+		UUserWidget* CharacterOverlay = CreateWidget<UUserWidget>(PlayerController, LevelOverlayClass);
 		CharacterOverlay->AddToViewport();
 	}
 }

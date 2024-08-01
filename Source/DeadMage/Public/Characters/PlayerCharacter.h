@@ -51,6 +51,8 @@ public:
 
 	FORCEINLINE uint8 GetComboAttackNumber() const { return ComboAttackNumber; }
 	FORCEINLINE uint8 GetMaxComboAttack() const { return MaxComboAttack; }
+	FORCEINLINE UPlayerAttributeSet* GetPlayerAttributeSet() const { return PlayerAttributes; }
+	FORCEINLINE UAbilitySystemComponent* GetPlayerAbilitySystem() const { return AbilitySystem; }
 
 private:
 
