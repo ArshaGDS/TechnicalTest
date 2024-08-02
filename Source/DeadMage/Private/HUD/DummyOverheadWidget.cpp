@@ -37,12 +37,9 @@ void UDummyOverheadWidget::NativeDestruct()
 
 void UDummyOverheadWidget::ShowDamageNumber(float AppliedDamage)
 {
-	if (!IsPlayingAnimation())
+	DamageAmount->SetText(FText::AsNumber(AppliedDamage));
+	if (RefDamageAmountAnimation)
 	{
-		DamageAmount->SetText(FText::AsNumber(AppliedDamage));
-		if (RefDamageAmountAnimation)
-		{
-			PlayAnimation(RefDamageAmountAnimation);
-		}
+		PlayAnimation(RefDamageAmountAnimation);
 	}
 }
