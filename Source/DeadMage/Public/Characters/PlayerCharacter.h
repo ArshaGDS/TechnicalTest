@@ -80,6 +80,13 @@ private:
 	float MaxDelayBetweenAttacks { 1.3 };
 	// End of combo system
 
+	// Refill arcana
+	FTimerHandle RefillArcanaTimerHandle;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Player|GameplayEffects")
+	float RefillDelay { 2.f };
+	// End of refill arcana
+	
 	// Input actions and mapping
 	UPROPERTY(EditDefaultsOnly, Category = "Player|InputActions")
 	TObjectPtr<UInputMappingContext> PlayerMappingContext;
@@ -97,6 +104,9 @@ private:
 	// Player attributes
 	UPROPERTY(Transient)
 	TObjectPtr<UPlayerAttributeSet> PlayerAttributes;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Player|GameplayEffects")
+	TSubclassOf<UGameplayEffect> ArcanaCoolDown;
 	
 	// Input callback functions
 	void MovementAction(const FInputActionValue& Value);
@@ -114,4 +124,8 @@ private:
 	void ResetTheComboCycle();
 	// End of combo functions
 
+	// Delegate callback function
+	void OnArcanaAttributeChanged(const FOnAttributeChangeData& Data);
+
+	void RefillArcana();
 };

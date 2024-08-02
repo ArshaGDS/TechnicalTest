@@ -76,7 +76,6 @@ void UGA_Fireball::FinisherTimer()
 	K2_PlayAttackMontage( AnimSectionNames.Last() );
 	SpawnProjectile(true);
 	K2_CommitAbilityCost();
-	K2_CommitAbilityCooldown();
 	K2_EndAbility();
 	// Cycle is ended
 }

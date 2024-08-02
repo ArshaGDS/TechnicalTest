@@ -22,6 +22,7 @@ ADummyCharacter::ADummyCharacter()
 
 	if (AbilitySystem)
 	{
+		AbilitySystem->ReplicationMode = EGameplayEffectReplicationMode::Minimal;
 		AbilitySystem->GetGameplayAttributeValueChangeDelegate(Attributes->GetDummyHealthAttribute())
 		.AddUObject(this, &ThisClass::OnHealthAttributeChanged);
 	}
@@ -39,7 +40,6 @@ void ADummyCharacter::OnHealthAttributeChanged(const FOnAttributeChangeData& Dat
 	if (OverheadWidget && OverheadWidget->GetWidget() && OverheadWidget->GetWidget()->Implements<UDummyWidgetInterface>())
 	{
 		const float HealthPercent = Data.NewValue / Attributes->GetDummyMaxHealth();
-		UE_LOG(LogTemp, Error, TEXT("[%hs] Role: %i Dummy old health %f , new health %f, MaxHealth %f"), __FUNCTION__, GetLocalRole(), Data.OldValue, Data.NewValue, Attributes->GetDummyMaxHealth());
 		const float DamageNumber =  Data.OldValue - Data.NewValue;
 		
 		IDummyWidgetInterface::Execute_SetHealthPercent(OverheadWidget->GetWidget(), HealthPercent, DamageNumber);

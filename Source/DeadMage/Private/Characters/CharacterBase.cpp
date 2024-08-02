@@ -18,7 +18,6 @@ ACharacterBase::ACharacterBase()
 	AbilitySystem = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComp"));
 	if (AbilitySystem)
 	{
-		AbilitySystem->ReplicationMode = EGameplayEffectReplicationMode::Mixed;
 		AbilitySystem->SetIsReplicated(true);
 	}
 }
@@ -31,8 +30,10 @@ void ACharacterBase::PossessedBy(AController* NewController)
 	if (AbilitySystem)
 	{
 		AbilitySystem->InitAbilityActorInfo(this, this);
-		GiveAbilities();
+		SetOwner(NewController);
+		
 		ApplyStartupEffects();
+		GiveAbilities();
 	}
 }
 
@@ -44,7 +45,7 @@ void ACharacterBase::OnRep_PlayerState()
 	if (AbilitySystem)
 	{
 		AbilitySystem->InitAbilityActorInfo(this, this);
-		ApplyStartupEffects();
+		UE_LOG(LogTemp, Error, TEXT("[%hs]"), __FUNCTION__);
 	}
 }
 
@@ -72,7 +73,7 @@ void ACharacterBase::SendGameplayEventToActor(ACharacterBase* Character, const F
 void ACharacterBase::GiveAbilities() const
 {
 	// Server side
-	if (HasAuthority() && AbilitySystem && CharacterDataAsset)
+	if (AbilitySystem && CharacterDataAsset)
 	{
 		for (const TSubclassOf<UGameplayAbility> DefaultAbility : CharacterDataAsset->CharacterData.Abilities)
 		{
@@ -84,7 +85,7 @@ void ACharacterBase::GiveAbilities() const
 void ACharacterBase::ApplyStartupEffects()
 {
 	// Server side
-	if (HasAuthority() && CharacterDataAsset)
+	if (CharacterDataAsset)
 	{
 		FGameplayEffectContextHandle EffectContext = AbilitySystem->MakeEffectContext();
 		EffectContext.AddSourceObject(this);
@@ -93,10 +94,6 @@ void ACharacterBase::ApplyStartupEffects()
 		{
 			ApplyGameplayEffectsToSelf(Effect, EffectContext);
 		}
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("[%hs] Can't initial startup effects"), __FUNCTION__);
 	}
 }
 

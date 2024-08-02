@@ -10,6 +10,7 @@
 #include "Characters/Components/ObjectPool.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -35,6 +36,13 @@ APlayerCharacter::APlayerCharacter()
 		GetCharacterMovement()->SetJumpAllowed(false);
 		GetCharacterMovement()->bOrientRotationToMovement = true;
 		GetCharacterMovement()->bIgnoreBaseRotation = true;
+	}
+
+	if (AbilitySystem)
+	{
+		AbilitySystem->ReplicationMode = EGameplayEffectReplicationMode::Mixed;
+		AbilitySystem->GetGameplayAttributeValueChangeDelegate(PlayerAttributes->GetPlayerArcanaAttribute())
+		.AddUObject(this, &ThisClass::OnArcanaAttributeChanged);
 	}
 
 	PlayerAttributes = CreateDefaultSubobject<UPlayerAttributeSet>(TEXT("PlayerAttributeSet"));
@@ -153,6 +161,24 @@ void APlayerCharacter::ResetTheComboCycle()
 {
 	LastAttackSecond = 0;
 	ComboAttackNumber = 0;
+}
+
+void APlayerCharacter::OnArcanaAttributeChanged(const FOnAttributeChangeData& Data)
+{
+	if (Data.NewValue <= 0)
+	{
+		GetWorld()->GetTimerManager().SetTimer(RefillArcanaTimerHandle, this, &ThisClass::RefillArcana, RefillDelay);
+	}
+}
+
+void APlayerCharacter::RefillArcana()
+{
+	GetWorld()->GetTimerManager().PauseTimer(RefillArcanaTimerHandle);
+	RefillArcanaTimerHandle.Invalidate();
+	// Arcana depleted
+	FGameplayEffectContextHandle EffectContext = AbilitySystem->MakeEffectContext();
+	EffectContext.AddSourceObject(this);
+	ApplyGameplayEffectsToSelf(ArcanaCoolDown, EffectContext);
 }
 
 
