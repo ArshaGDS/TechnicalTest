@@ -39,6 +39,16 @@ void UMainMenuOverlay::InitializeEvents()
 
 	QuitButton->OnHovered.AddDynamic(this, &ThisClass::QuitButtonHovered);
 	QuitButton->OnUnhovered.AddDynamic(this, &ThisClass::QuitButtonUnHovered);
+
+	PublisherButton->OnClicked.AddDynamic(this, &ThisClass::PublisherButtonClicked);
+	DeadMageButton->OnClicked.AddDynamic(this, &ThisClass::DeadMageButtonClicked);
+	DiscordButton->OnClicked.AddDynamic(this, &ThisClass::DiscordButtonClicked);
+	SteamButton->OnClicked.AddDynamic(this, &ThisClass::SteamButtonClicked);
+}
+
+void UMainMenuOverlay::OpenWebsite(const TCHAR* Link)
+{
+	FPlatformProcess::LaunchURL(Link, NULL, NULL);
 }
 
 void UMainMenuOverlay::PlayButtonClicked()
@@ -67,7 +77,7 @@ void UMainMenuOverlay::PlayButtonHovered()
 	if (!MenuArrow->IsVisible())
 		MenuArrow->SetVisibility(ESlateVisibility::Visible);
 	
-	MenuArrow->SetRenderTranslation(FVector2D(0, 0));
+	MenuArrow->SetRenderTranslation(FVector2D());
 }
 
 void UMainMenuOverlay::PlayButtonUnHovered()
@@ -89,5 +99,25 @@ void UMainMenuOverlay::QuitButtonHovered()
 void UMainMenuOverlay::QuitButtonUnHovered()
 {
 	QuitButton->SetColorAndOpacity(DefaultTextColor);
+}
+
+void UMainMenuOverlay::PublisherButtonClicked()
+{
+	OpenWebsite(TEXT("https://www.humblegames.com/"));
+}
+
+void UMainMenuOverlay::DeadMageButtonClicked()
+{
+	OpenWebsite(TEXT("https://deadmage.com/"));
+}
+
+void UMainMenuOverlay::DiscordButtonClicked()
+{
+	OpenWebsite(TEXT("https://discord.com/"));
+}
+
+void UMainMenuOverlay::SteamButtonClicked()
+{
+	OpenWebsite(TEXT("https://store.steampowered.com/app/2193540/Wizard_of_Legend_2/"));
 }
 

@@ -6,8 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "MainMenuOverlay.generated.h"
 
-class UButton;
 class UImage;
+class UButton;
 class UTextBlock;
 /**
  * 
@@ -35,16 +35,16 @@ public:
 	TObjectPtr<UImage> MenuArrow;
 
 	UPROPERTY(meta=(BindWidget))
-	TObjectPtr<UImage> PublisherIcon;
+	TObjectPtr<UButton> PublisherButton;
 
 	UPROPERTY(meta=(BindWidget))
-	TObjectPtr<UImage> DeadMageIcon;
+	TObjectPtr<UButton> DeadMageButton;
 
 	UPROPERTY(meta=(BindWidget))
-	TObjectPtr<UImage> DiscordIcon;
+	TObjectPtr<UButton> DiscordButton;
 
 	UPROPERTY(meta=(BindWidget))
-	TObjectPtr<UImage> SteamIcon;
+	TObjectPtr<UButton> SteamButton;
 
 	UPROPERTY(EditDefaultsOnly, Category = "MainMenu")
 	FLinearColor SelectedTextColor;
@@ -63,6 +63,7 @@ private:
 	
 	void ShowMouseCursor();
 	void InitializeEvents();
+	void OpenWebsite(const TCHAR* Link);
 
 	// UI callbacks
 	UFUNCTION()
@@ -82,5 +83,17 @@ private:
 
 	UFUNCTION()
 	void QuitButtonUnHovered();
+
+	UFUNCTION()
+	void PublisherButtonClicked();
+
+	UFUNCTION()
+	void DeadMageButtonClicked();
+
+	UFUNCTION()
+	void DiscordButtonClicked();
+
+	UFUNCTION()
+	void SteamButtonClicked();
 	// End of UI callbacks
 };
