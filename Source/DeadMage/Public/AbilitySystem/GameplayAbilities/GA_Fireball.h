@@ -24,9 +24,6 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "FireballAttack")
 	float FinisherDelay { 1.3f };
-
-	UPROPERTY(EditDefaultsOnly, Category = "FireballAttack")
-	FName StartFinisherSectionName {};
 	
 	// Name of the related section anim attack in anim montage
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "FireballAttack|Animation")

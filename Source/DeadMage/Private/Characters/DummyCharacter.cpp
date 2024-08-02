@@ -42,7 +42,10 @@ void ADummyCharacter::OnHealthAttributeChanged(const FOnAttributeChangeData& Dat
 		const float HealthPercent = Data.NewValue / Attributes->GetDummyMaxHealth();
 		const float DamageNumber =  Data.OldValue - Data.NewValue;
 		
-		IDummyWidgetInterface::Execute_SetHealthPercent(OverheadWidget->GetWidget(), HealthPercent, DamageNumber);
+		if (DamageNumber > 0)
+		{
+			IDummyWidgetInterface::Execute_SetHealthPercent(OverheadWidget->GetWidget(), HealthPercent, DamageNumber);
+		}
 	}
 }
 

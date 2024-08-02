@@ -135,12 +135,8 @@ void APlayerCharacter::DashAction(const FInputActionValue& Value)
 void APlayerCharacter::SetInputMappingContext() const
 {
 	const APlayerController* PlayerController = Cast<APlayerController>(Controller);
-	if (!PlayerController)
-	{
-		UE_LOG(LogTemp, Error, TEXT("[%hs] Can't access to player controller"), __FUNCTION__);
-		return;
-	}
-
+	if (!PlayerController) return;
+	
 	UEnhancedInputLocalPlayerSubsystem* EnhancedInputSubsystem =
 		ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer());
 	if (!EnhancedInputSubsystem)

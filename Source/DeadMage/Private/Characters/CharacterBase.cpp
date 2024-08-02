@@ -45,7 +45,7 @@ void ACharacterBase::OnRep_PlayerState()
 	if (AbilitySystem)
 	{
 		AbilitySystem->InitAbilityActorInfo(this, this);
-		UE_LOG(LogTemp, Error, TEXT("[%hs]"), __FUNCTION__);
+		ApplyStartupEffects();
 	}
 }
 
@@ -84,13 +84,12 @@ void ACharacterBase::GiveAbilities() const
 
 void ACharacterBase::ApplyStartupEffects()
 {
-	// Server side
 	if (CharacterDataAsset)
 	{
 		FGameplayEffectContextHandle EffectContext = AbilitySystem->MakeEffectContext();
 		EffectContext.AddSourceObject(this);
 
-		for (const TSubclassOf<UGameplayEffect> Effect: CharacterDataAsset->CharacterData.Effects)
+		for (const TSubclassOf<UGameplayEffect> Effect : CharacterDataAsset->CharacterData.Effects)
 		{
 			ApplyGameplayEffectsToSelf(Effect, EffectContext);
 		}
