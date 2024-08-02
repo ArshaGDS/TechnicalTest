@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameplayEffectTypes.h"
 #include "PooledActor.h"
+#include "Interfaces/FireballInterface.h"
 #include "FireballProjectile.generated.h"
 
 class UAbilitySystemComponent;
@@ -13,7 +14,7 @@ class USphereComponent;
 class UProjectileMovementComponent;
 
 UCLASS()
-class DEADMAGE_API AFireballProjectile : public APooledActor
+class DEADMAGE_API AFireballProjectile : public APooledActor, public IFireballInterface
 {
 	GENERATED_BODY()
 
@@ -49,6 +50,9 @@ protected:
 
 	// Called when the object is used, to handle its active or inactive state
 	virtual void OnInUse(const bool InUse) override;
+
+	// Interface
+	virtual void SetFireballAttackState_Implementation(bool IsFinisher) override;
 
 private:
 	

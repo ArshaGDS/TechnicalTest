@@ -12,14 +12,14 @@ void APooledActor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//SetInUse(false);
+	SetInUse(false);
 }
 
 void APooledActor::SetInUse(const bool InUse)
 {
 	bInUse = InUse;
 	SetActorEnableCollision(InUse);
-	SetActorHiddenInGame(InUse);
+	SetActorHiddenInGame(!InUse);
 
 	if (InUse && GetWorld())
 	{
@@ -32,6 +32,7 @@ void APooledActor::SetInUse(const bool InUse)
 	}
 
 	OnInUse(InUse);
+	K2_OnInUse(InUse);
 }
 
 void APooledActor::ReturnToPool()

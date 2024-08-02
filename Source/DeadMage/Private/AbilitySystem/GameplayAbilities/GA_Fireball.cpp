@@ -6,6 +6,7 @@
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Actors/FireballProjectile.h"
 #include "Characters/PlayerCharacter.h"
+#include "Characters/Components/ObjectPool.h"
 
 void UGA_Fireball::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
                                    const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -63,14 +64,11 @@ void UGA_Fireball::SpawnProjectile(const bool IsFinisher)
 	FTransform SpawnTransform = GetPlayer()->GetActorTransform();
 	const FVector Location = GetPlayer()->GetActorLocation() + (GetPlayer()->GetActorForwardVector() * 100);
 	SpawnTransform.SetLocation(Location);
-		
-	AFireballProjectile* FireballProjectile = GetWorld()->SpawnActorDeferred<AFireballProjectile>(PooledActorClass,
-		   SpawnTransform, GetAvatarActorFromActorInfo(), nullptr, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
-	
-	if (FireballProjectile)
+
+	APooledActor* Projectile = GetPlayer()->ObjectPoolComponent->SpawnActorFromPool(SpawnTransform);
+	if (Projectile && Projectile->Implements<UFireballInterface>())
 	{
-		FireballProjectile->SetIsFinisher(IsFinisher);
-		FireballProjectile->FinishSpawning(SpawnTransform);
+		IFireballInterface::Execute_SetFireballAttackState(Projectile, IsFinisher);
 	}
 }
 

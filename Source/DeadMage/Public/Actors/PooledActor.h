@@ -25,9 +25,11 @@ public:
 protected:
 
 	virtual void BeginPlay() override;
-
-	UFUNCTION(BlueprintCallable)
+	
 	virtual void OnInUse(const bool InUse) {}
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "PooledActor", DisplayName = "OnInUse", meta=(ScriptName = "OnInUse"))
+	void K2_OnInUse(const bool InUse);
 
 private:
 

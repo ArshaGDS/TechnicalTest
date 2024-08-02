@@ -41,7 +41,6 @@ void AFireballProjectile::BeginPlay()
 	Super::BeginPlay();
 	
 	SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::AFireballProjectile::OnOverlap);
-	ProjectileMovementComponent->Velocity = GetActorForwardVector() * FireballVelocity;
 }
 
 void AFireballProjectile::OnInUse(const bool InUse)
@@ -50,14 +49,18 @@ void AFireballProjectile::OnInUse(const bool InUse)
 
 	if (ProjectileMovementComponent)
 	{
-		UE_LOG(LogTemp, Display, TEXT("[%hs], %i"), __FUNCTION__, InUse);
-		//ProjectileMovementComponent->Velocity = InUse ? GetActorForwardVector() * FireballVelocity : FVector::ZeroVector ;
+		ProjectileMovementComponent->Velocity = InUse ? GetActorForwardVector() * FireballVelocity : FVector::ZeroVector ;
 	}
+}
+
+void AFireballProjectile::SetFireballAttackState_Implementation(bool IsFinisher)
+{
+	bIsFinisher = IsFinisher;
 }
 
 void AFireballProjectile::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	//SetInUse(false);
+	SetInUse(false);
 
 	// Apply damage on overlapped actor
 	ApplyDamageEffectOnHitedActor(OtherActor);
@@ -72,12 +75,13 @@ void AFireballProjectile::ApplyDamageEffectOnHitedActor(AActor* HitedActor)
 		if (bIsFinisher)
 		{
 			ApplyEffectsToActor(AbilitySystem, FinisherDamageEffect);
+			bIsFinisher = false;
 		}
 		else
 		{
 			ApplyEffectsToActor(AbilitySystem, DamageEffect);
 		}
-		Destroy();
+		SetInUse(false);
 	}
 }
 
@@ -97,6 +101,5 @@ FGameplayEffectContextHandle AFireballProjectile::ApplyEffectsToActor(UAbilitySy
 		}
 	}
 	
-
 	return EffectContext;
 }

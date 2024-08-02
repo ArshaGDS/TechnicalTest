@@ -14,7 +14,7 @@ void UObjectPool::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//InitializePool();
+	InitializePool();
 }
 
 APooledActor* UObjectPool::FindFirstAvailableActor()
@@ -37,6 +37,7 @@ APooledActor* UObjectPool::SpawnActorFromPool(const FTransform& SpawnTransform)
 	{
 		PooledActor->SetActorTransform(SpawnTransform);
 		PooledActor->SetInUse(true);
+		return  PooledActor;
 	}
 
 	return nullptr;
