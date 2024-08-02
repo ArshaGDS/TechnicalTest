@@ -55,7 +55,7 @@ void UMainMenuOverlay::PlayButtonClicked()
 {
 	if (GetWorld())
 	{
-		GetWorld()->ServerTravel(FString("/Game/Maps/Arena_Map?listen"));
+		UGameplayStatics::OpenLevel(this, TEXT("Arena_Map"), true);
 	}
 }
 

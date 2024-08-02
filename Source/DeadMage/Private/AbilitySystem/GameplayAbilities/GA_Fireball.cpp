@@ -36,8 +36,13 @@ void UGA_Fireball::PerformAttack()
 	{
 		SpawnProjectile(false);
 		const uint8 AnimSectionNameIndex = GetPlayer()->GetComboAttackNumber() - 1;
-		K2_PlayAttackMontage(AnimSectionNames[ AnimSectionNameIndex ]);
-		K2_CommitAbilityCost();
+
+		// If index in array range
+		if (AnimSectionNameIndex < AnimSectionNames.Num() && AnimSectionNameIndex > -1)
+		{
+			K2_PlayAttackMontage(AnimSectionNames[ AnimSectionNameIndex ]);
+			K2_CommitAbilityCost();
+		}
 		K2_EndAbility();
 	}
 	else
@@ -71,6 +76,7 @@ void UGA_Fireball::SpawnProjectile(const bool IsFinisher)
 
 void UGA_Fireball::FinisherTimer()
 {
+	UE_LOG(LogTemp, Error, TEXT("[%hs]"), __FUNCTION__);
 	GetWorld()->GetTimerManager().PauseTimer(FinisherTimerHandle);
 	FinisherTimerHandle.Invalidate();
 	K2_PlayAttackMontage( AnimSectionNames.Last() );

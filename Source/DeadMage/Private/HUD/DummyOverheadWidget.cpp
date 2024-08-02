@@ -4,7 +4,6 @@
 #include "HUD/DummyOverheadWidget.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
-#include "Kismet/GameplayStatics.h"
 
 // Interface
 void UDummyOverheadWidget::SetHealthPercent_Implementation(float Health, float AppliedDamage)
@@ -15,7 +14,6 @@ void UDummyOverheadWidget::SetHealthPercent_Implementation(float Health, float A
 		SetVisibility(ESlateVisibility::Visible);
 	}
 	
-	UE_LOG(LogTemp, Error, TEXT("[%hs] NetRole: %i Health: %f AppliedDamage: %f"), __FUNCTION__, UGameplayStatics::GetPlayerController(this, 0)->GetLocalRole(), Health, AppliedDamage);
 	SetHealthPercent(Health);
 	ShowDamageNumber(AppliedDamage);
 }
