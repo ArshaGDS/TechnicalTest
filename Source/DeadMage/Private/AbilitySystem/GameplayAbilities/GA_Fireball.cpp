@@ -54,6 +54,12 @@ void UGA_Fireball::PerformAttack()
 			const uint8 FinisherPart1Index = AnimSectionNames.Num() - 2;
 			K2_PlayAttackMontage( AnimSectionNames[FinisherPart1Index] );
 			// Delay for charging attack
+			
+			if (!GetWorld())
+			{
+				UE_LOG(LogTemp, Error, TEXT("[%hs] GetWorld"), __FUNCTION__);
+			}
+			
 			GetWorld()->GetTimerManager().SetTimer(FinisherTimerHandle, this, &UGA_Fireball::FinisherTimer, FinisherDelay);
 		}
 	}

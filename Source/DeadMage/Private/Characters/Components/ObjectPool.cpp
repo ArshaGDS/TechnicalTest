@@ -14,6 +14,12 @@ void UObjectPool::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (GetNetMode() == NM_DedicatedServer && (GetOwner()->GetLocalRole() == ROLE_Authority || GetOwner()->GetLocalRole() == ROLE_SimulatedProxy))
+	{
+		// No need for initialization
+		return;
+	}
+	
 	InitializePool();
 }
 
