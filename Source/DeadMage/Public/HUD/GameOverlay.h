@@ -22,19 +22,19 @@ class DEADMAGE_API UGameOverlay : public UUserWidget
 protected:
 
 	UPROPERTY(meta = (BindWidget))
-	UProgressBar* PlayerHealthBar;
+	TObjectPtr<UProgressBar> PlayerHealthBar;
 
 	UPROPERTY(meta = (BindWidget))
-	UProgressBar* PlayerArcanaBar;
+	TObjectPtr<UProgressBar> PlayerArcanaBar;
 	
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* CurrentHealthText;
+	TObjectPtr<UTextBlock> CurrentHealthText;
 
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* MaxHealthText;
+	TObjectPtr<UTextBlock> MaxHealthText;
 	
 	UPROPERTY(meta = (BindWidget))
-	UImage* AttackIcon;
+	TObjectPtr<UImage> AttackIcon;
 
 	void SetPlayerHealth(const float MaxHealth, const float CurrentHealth) const;
 	void SetPlayerArcana(const float MaxArcana, const float CurrentArcana) const;

@@ -140,7 +140,6 @@ void APlayerCharacter::SetInputMappingContext() const
 		UE_LOG(LogTemp, Error, TEXT("[%hs] Can't access to enhanced input subsystem"), __FUNCTION__);
 		return;
 	}
-
 	EnhancedInputSubsystem->AddMappingContext(PlayerMappingContext, PRIORITY_0);
 }
 
