@@ -9,6 +9,7 @@
 #include "Interfaces/PlayerCharacterInterface.h"
 #include "PlayerCharacter.generated.h"
 
+class UCombatComponent;
 class UObjectPool;
 class UPlayerAttributeSet;
 class USpringArmComponent;
@@ -36,6 +37,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	TObjectPtr<UObjectPool> ObjectPoolComponent;
 	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	TObjectPtr<UCombatComponent> CombatComponent;
+	
 	// Gameplay Tags
 	UPROPERTY(EditDefaultsOnly, Category = "Player|AbilityTags")
 	FGameplayTag DashAbilityTag;
@@ -48,14 +52,10 @@ public:
 	
 	virtual void BeginPlay() override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	void ResetTheComboCycle();
 	
-	FORCEINLINE uint8 GetComboAttackNumber() const { return CurrentAttackNumber; }
-	FORCEINLINE uint8 GetMaxComboAttack() const { return MaxComboAttack; }
 	FORCEINLINE UPlayerAttributeSet* GetPlayerAttributeSet() const { return PlayerAttributes; }
 	FORCEINLINE UAbilitySystemComponent* GetPlayerAbilitySystem() const { return AbilitySystem; }
-	FORCEINLINE void IncreaseCurrentAttackNumber() { CurrentAttackNumber++; }
+	FORCEINLINE UCombatComponent* GetPlayerCombatComponent() const { return CombatComponent; }
 
 private:
 
@@ -68,21 +68,7 @@ private:
 	FVector ForwardDirection;
 	FVector RightDirection;
 	// End of cache movement variables
-
-	// Combo system
-	// Cache Attack cycle
-	double LastAttackSecond { 0.0 };
-
-	// Cache combo attack number
-	uint8 CurrentAttackNumber { 0 };
 	
-	UPROPERTY(EditDefaultsOnly, Category = "Player|ComboSystem")
-	uint8 MaxComboAttack { 3 };
-
-	UPROPERTY(EditDefaultsOnly, Category = "Player|ComboSystem")
-	float MaxDelayBetweenAttacks { 1.3 };
-	// End of combo system
-
 	// Refill arcana
 	FTimerHandle RefillArcanaTimerHandle;
 

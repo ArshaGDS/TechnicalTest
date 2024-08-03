@@ -7,6 +7,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "AbilitySystem/AttributeSets/PlayerAttributeSet.h"
 #include "Camera/CameraComponent.h"
+#include "Characters/Components/CombatComponent.h"
 #include "Characters/Components/ObjectPool.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -47,6 +48,11 @@ APlayerCharacter::APlayerCharacter()
 	PlayerAttributes = CreateDefaultSubobject<UPlayerAttributeSet>(TEXT("PlayerAttributeSet"));
 	
 	ObjectPoolComponent = CreateDefaultSubobject<UObjectPool>(TEXT("ObjectPoolComponent"));
+	CombatComponent = CreateDefaultSubobject<UCombatComponent>(TEXT("CombatComponent"));
+	if (CombatComponent)
+	{
+		CombatComponent->SetIsReplicated(true);
+	}
 }
 
 void APlayerCharacter::BeginPlay()
@@ -104,24 +110,8 @@ void APlayerCharacter::AttackAction(const FInputActionValue& Value)
 {
 	// Not enough Arcana
 	if (!PlayerAttributes->GetPlayerArcana()) return;
-	
-	const double CurrentGameSecond = GetWorld()->GetTimeSeconds();
-	if (CurrentGameSecond - LastAttackSecond > MaxDelayBetweenAttacks)
-	{
-		// Reset the cycle
-		ResetTheComboCycle();
-	}
-	
-	// Save current game second for next cycle
-	LastAttackSecond = CurrentGameSecond;
-	
+
 	SendGameplayEventToActor(this, AttackAbilityTag);
-	
-	if (CurrentAttackNumber >= MaxComboAttack)
-	{
-		// Reset the cycle
-		ResetTheComboCycle();
-	}
 }
 
 void APlayerCharacter::DashAction(const FInputActionValue& Value)
@@ -148,12 +138,6 @@ void APlayerCharacter::SetInputMappingContext() const
 APlayerCharacter* APlayerCharacter::GetPlayerCharacter_Implementation()
 {
 	return this;
-}
-
-void APlayerCharacter::ResetTheComboCycle()
-{
-	LastAttackSecond = 0;
-	CurrentAttackNumber = 0;
 }
 
 void APlayerCharacter::OnArcanaAttributeChanged(const FOnAttributeChangeData& Data)

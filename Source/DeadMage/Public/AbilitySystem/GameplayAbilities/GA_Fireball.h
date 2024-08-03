@@ -14,30 +14,22 @@ UCLASS()
 class DEADMAGE_API UGA_Fireball : public UGameplayAbility
 {
 	GENERATED_BODY()
-	
-	uint8 Counter { 0 };
-	
+
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
 		const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
-protected:
+	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+		const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 
-	UPROPERTY(EditDefaultsOnly, Category = "FireballAttack")
-	float FinisherDelay { 1.3f };
+protected:
 	
 	// Name of the related section anim attack in anim montage
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "FireballAttack|Animation")
 	TArray<FName> AnimSectionNames;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "FireballAttack|Animation")
-	TSubclassOf<APooledActor> PooledActorClass;
 	
 	UFUNCTION(BlueprintCallable)
 	APlayerCharacter* GetPlayer();
 	
-	UFUNCTION(BlueprintCallable)
-	bool IsFinisherAttack();
-
 	UFUNCTION(BlueprintCallable)
 	void PerformAttack();
 
@@ -46,14 +38,10 @@ protected:
 	void K2_PlayAttackMontage(FName AnimSectionName);
 
 private:
-
-	FTimerHandle FinisherTimerHandle;
 	
-	uint8 ComboAttackNumber { 0 };
-
 	UPROPERTY()
 	TObjectPtr<APlayerCharacter> PlayerCharacterPtr { nullptr };
-
-	void SpawnProjectile(const bool IsFinisher);
-	void FinisherTimer();
+	
+	void OnStartedAttack(const uint8 AttackNumber, const bool bIsFinisher);
+	void OnFinishedAttack(const uint8 AttackNumber, const bool bIsFinisher);
 };

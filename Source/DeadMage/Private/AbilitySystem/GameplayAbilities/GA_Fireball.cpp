@@ -4,17 +4,29 @@
 #include "AbilitySystem/GameplayAbilities/GA_Fireball.h"
 
 #include "AbilitySystemComponent.h"
-#include "Actors/FireballProjectile.h"
 #include "Characters/PlayerCharacter.h"
-#include "Characters/Components/ObjectPool.h"
+#include "Characters/Components/CombatComponent.h"
 
 void UGA_Fireball::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
                                    const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-	
+
+	// Register delegate for detect attack state
+	GetPlayer()->GetPlayerCombatComponent()->OnStartedAttack.AddUObject(this, &UGA_Fireball::OnStartedAttack);
+	GetPlayer()->GetPlayerCombatComponent()->OnFinishedAttack.AddUObject(this, &UGA_Fireball::OnFinishedAttack);
 	CommitAbilityCost(Handle, ActorInfo, ActivationInfo);
 	PerformAttack();
+}
+
+void UGA_Fireball::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+	const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
+{
+	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+
+	// Unregister delegate for detect attack state
+	GetPlayer()->GetPlayerCombatComponent()->OnStartedAttack.RemoveAll(this);
+	GetPlayer()->GetPlayerCombatComponent()->OnFinishedAttack.RemoveAll(this);
 }
 
 APlayerCharacter* UGA_Fireball::GetPlayer()
@@ -33,60 +45,37 @@ APlayerCharacter* UGA_Fireball::GetPlayer()
 
 void UGA_Fireball::PerformAttack()
 {
-	GetPlayer()->IncreaseCurrentAttackNumber();
-	
-	if (!IsFinisherAttack())
-	{
-		SpawnProjectile(false);
-		const uint8 AnimSectionNameIndex = GetPlayer()->GetComboAttackNumber() - 1;
+	GetPlayer()->GetPlayerCombatComponent()->Attack();
+}
 
+void UGA_Fireball::OnStartedAttack(const uint8 AttackNumber, const bool bIsFinisher)
+{
+	if (bIsFinisher)
+	{
+		const uint8 AnimSectionNameIndex = AnimSectionNames.Num() - 2;
+		
+		// Play first part of finisher animation 
+		K2_PlayAttackMontage( AnimSectionNames[ AnimSectionNameIndex ] );
+	}
+}
+
+void UGA_Fireball::OnFinishedAttack(const uint8 AttackNumber, const bool bIsFinisher)
+{
+	if (bIsFinisher)
+	{
+		// Play second part of finisher animation
+		K2_PlayAttackMontage( AnimSectionNames.Last() );
+	}
+	else
+	{
+		const uint8 AnimSectionNameIndex = AttackNumber - 1;
+        	
 		// If index in array range
 		if (AnimSectionNameIndex < AnimSectionNames.Num() && AnimSectionNameIndex > -1)
 		{
 			K2_PlayAttackMontage(AnimSectionNames[ AnimSectionNameIndex ]);
 		}
+		
 		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), true, false);
 	}
-	else
-	{
-		if (GetWorld())
-		{
-			// Start finisher part of cycle
-			const uint8 FinisherFirstSectionIndex = AnimSectionNames.Num() - 2;
-			K2_PlayAttackMontage( AnimSectionNames[FinisherFirstSectionIndex] );
-			
-			// Delay for charging attack
-			GetWorld()->GetTimerManager().SetTimer(FinisherTimerHandle, this, &UGA_Fireball::FinisherTimer, FinisherDelay);
-			GetPlayer()->ResetTheComboCycle();
-		}
-	}
-	
-}
-
-void UGA_Fireball::SpawnProjectile(const bool IsFinisher)
-{
-	FTransform SpawnTransform = GetPlayer()->GetActorTransform();
-	const FVector Location = GetPlayer()->GetActorLocation() + (GetPlayer()->GetActorForwardVector() * 100);
-	SpawnTransform.SetLocation(Location);
-
-	APooledActor* Projectile = GetPlayer()->ObjectPoolComponent->SpawnActorFromPool(SpawnTransform);
-	if (Projectile && Projectile->Implements<UFireballInterface>())
-	{
-		IFireballInterface::Execute_SetFireballAttackState(Projectile, IsFinisher);
-	}
-}
-
-void UGA_Fireball::FinisherTimer()
-{
-	GetWorld()->GetTimerManager().PauseTimer(FinisherTimerHandle);
-	FinisherTimerHandle.Invalidate();
-	K2_PlayAttackMontage( AnimSectionNames.Last() );
-	SpawnProjectile(true);
-	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), true, false);
-	// Cycle is ended
-}
-
-bool UGA_Fireball::IsFinisherAttack()
-{
-	return GetPlayer()->GetMaxComboAttack() == GetPlayer()->GetComboAttackNumber();
 }
