@@ -10,7 +10,6 @@
 #include "Characters/Components/ObjectPool.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "Kismet/GameplayStatics.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -112,15 +111,13 @@ void APlayerCharacter::AttackAction(const FInputActionValue& Value)
 		// Reset the cycle
 		ResetTheComboCycle();
 	}
-
-	ComboAttackNumber++;
-
+	
 	// Save current game second for next cycle
 	LastAttackSecond = CurrentGameSecond;
 	
 	SendGameplayEventToActor(this, AttackAbilityTag);
 	
-	if (ComboAttackNumber >= MaxComboAttack)
+	if (CurrentAttackNumber >= MaxComboAttack)
 	{
 		// Reset the cycle
 		ResetTheComboCycle();
@@ -156,7 +153,7 @@ APlayerCharacter* APlayerCharacter::GetPlayerCharacter_Implementation()
 void APlayerCharacter::ResetTheComboCycle()
 {
 	LastAttackSecond = 0;
-	ComboAttackNumber = 0;
+	CurrentAttackNumber = 0;
 }
 
 void APlayerCharacter::OnArcanaAttributeChanged(const FOnAttributeChangeData& Data)
@@ -172,9 +169,5 @@ void APlayerCharacter::RefillArcana()
 	GetWorld()->GetTimerManager().PauseTimer(RefillArcanaTimerHandle);
 	RefillArcanaTimerHandle.Invalidate();
 	// Arcana depleted
-	FGameplayEffectContextHandle EffectContext = AbilitySystem->MakeEffectContext();
-	EffectContext.AddSourceObject(this);
-	ApplyGameplayEffectsToSelf(ArcanaCoolDown, EffectContext);
+	ApplyGameplayEffectsToSelf(ArcanaCoolDown);
 }
-
-

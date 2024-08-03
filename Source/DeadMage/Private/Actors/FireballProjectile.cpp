@@ -27,6 +27,7 @@ AFireballProjectile::AFireballProjectile()
 		ProjectileMovementComponent->bShouldBounce = false;
 		ProjectileMovementComponent->Bounciness = 0.f;
 		ProjectileMovementComponent->Velocity = FVector::ZeroVector;
+		ProjectileMovementComponent->SetIsReplicated(true);
 	}
 	
 	SphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollision"));

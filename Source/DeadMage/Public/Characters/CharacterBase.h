@@ -31,8 +31,7 @@ protected:
 	void ApplyStartupEffects();
 	
 	void SendGameplayEventToActor(ACharacterBase* Character, const FGameplayTag EventTag);
-	bool ApplyGameplayEffectsToSelf(const TSubclassOf<UGameplayEffect>& Effect,
-									const FGameplayEffectContextHandle& InEffectContext);
+	bool ApplyGameplayEffectsToSelf(const TSubclassOf<UGameplayEffect>& Effect);
 
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_PlayerState() override;

@@ -31,10 +31,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "FireballAttack|Animation")
 	TSubclassOf<APooledActor> PooledActorClass;
-
-	UFUNCTION(BlueprintCallable, BlueprintPure)
-	uint8 GetComboAttackNumber();
-
+	
 	UFUNCTION(BlueprintCallable)
 	APlayerCharacter* GetPlayer();
 	

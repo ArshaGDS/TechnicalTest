@@ -3,7 +3,7 @@
 
 #include "AbilitySystem/GameplayAbilities/GA_Fireball.h"
 
-#include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
+#include "AbilitySystemComponent.h"
 #include "Actors/FireballProjectile.h"
 #include "Characters/PlayerCharacter.h"
 #include "Characters/Components/ObjectPool.h"
@@ -12,7 +12,8 @@ void UGA_Fireball::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
                                    const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-
+	
+	CommitAbilityCost(Handle, ActorInfo, ActivationInfo);
 	PerformAttack();
 }
 
@@ -24,7 +25,6 @@ APlayerCharacter* UGA_Fireball::GetPlayer()
 	if (AvatarActor && AvatarActor->Implements<UPlayerCharacterInterface>())
 	{
 		PlayerCharacterPtr = IPlayerCharacterInterface::Execute_GetPlayerCharacter(AvatarActor);
-
 		return PlayerCharacterPtr;
 	}
 
@@ -33,6 +33,8 @@ APlayerCharacter* UGA_Fireball::GetPlayer()
 
 void UGA_Fireball::PerformAttack()
 {
+	GetPlayer()->IncreaseCurrentAttackNumber();
+	
 	if (!IsFinisherAttack())
 	{
 		SpawnProjectile(false);
@@ -42,21 +44,23 @@ void UGA_Fireball::PerformAttack()
 		if (AnimSectionNameIndex < AnimSectionNames.Num() && AnimSectionNameIndex > -1)
 		{
 			K2_PlayAttackMontage(AnimSectionNames[ AnimSectionNameIndex ]);
-			K2_CommitAbilityCost();
 		}
-		K2_EndAbility();
+		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), true, false);
 	}
 	else
 	{
 		if (GetWorld())
 		{
 			// Start finisher part of cycle
-			const uint8 FinisherPart1Index = AnimSectionNames.Num() - 2;
-			K2_PlayAttackMontage( AnimSectionNames[FinisherPart1Index] );
+			const uint8 FinisherFirstSectionIndex = AnimSectionNames.Num() - 2;
+			K2_PlayAttackMontage( AnimSectionNames[FinisherFirstSectionIndex] );
+			
 			// Delay for charging attack
 			GetWorld()->GetTimerManager().SetTimer(FinisherTimerHandle, this, &UGA_Fireball::FinisherTimer, FinisherDelay);
+			GetPlayer()->ResetTheComboCycle();
 		}
 	}
+	
 }
 
 void UGA_Fireball::SpawnProjectile(const bool IsFinisher)
@@ -74,20 +78,12 @@ void UGA_Fireball::SpawnProjectile(const bool IsFinisher)
 
 void UGA_Fireball::FinisherTimer()
 {
-	UE_LOG(LogTemp, Error, TEXT("[%hs]"), __FUNCTION__);
 	GetWorld()->GetTimerManager().PauseTimer(FinisherTimerHandle);
 	FinisherTimerHandle.Invalidate();
 	K2_PlayAttackMontage( AnimSectionNames.Last() );
 	SpawnProjectile(true);
-	K2_CommitAbilityCost();
-	K2_EndAbility();
+	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), true, false);
 	// Cycle is ended
-}
-
-uint8 UGA_Fireball::GetComboAttackNumber()
-{
-	ComboAttackNumber = GetPlayer()->GetComboAttackNumber();
-	return ComboAttackNumber;
 }
 
 bool UGA_Fireball::IsFinisherAttack()

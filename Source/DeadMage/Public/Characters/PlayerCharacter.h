@@ -35,7 +35,7 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	TObjectPtr<UObjectPool> ObjectPoolComponent;
-
+	
 	// Gameplay Tags
 	UPROPERTY(EditDefaultsOnly, Category = "Player|AbilityTags")
 	FGameplayTag DashAbilityTag;
@@ -49,10 +49,13 @@ public:
 	virtual void BeginPlay() override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	FORCEINLINE uint8 GetComboAttackNumber() const { return ComboAttackNumber; }
+	void ResetTheComboCycle();
+	
+	FORCEINLINE uint8 GetComboAttackNumber() const { return CurrentAttackNumber; }
 	FORCEINLINE uint8 GetMaxComboAttack() const { return MaxComboAttack; }
 	FORCEINLINE UPlayerAttributeSet* GetPlayerAttributeSet() const { return PlayerAttributes; }
 	FORCEINLINE UAbilitySystemComponent* GetPlayerAbilitySystem() const { return AbilitySystem; }
+	FORCEINLINE void IncreaseCurrentAttackNumber() { CurrentAttackNumber++; }
 
 private:
 
@@ -71,7 +74,7 @@ private:
 	double LastAttackSecond { 0.0 };
 
 	// Cache combo attack number
-	uint8 ComboAttackNumber { 0 };
+	uint8 CurrentAttackNumber { 0 };
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Player|ComboSystem")
 	uint8 MaxComboAttack { 3 };
@@ -119,10 +122,6 @@ private:
 
 	// Interface
 	virtual APlayerCharacter* GetPlayerCharacter_Implementation() override;
-
-	// Combo functions
-	void ResetTheComboCycle();
-	// End of combo functions
 
 	// Delegate callback function
 	void OnArcanaAttributeChanged(const FOnAttributeChangeData& Data);

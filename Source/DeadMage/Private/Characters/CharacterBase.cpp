@@ -86,19 +86,19 @@ void ACharacterBase::ApplyStartupEffects()
 {
 	if (CharacterDataAsset)
 	{
-		FGameplayEffectContextHandle EffectContext = AbilitySystem->MakeEffectContext();
-		EffectContext.AddSourceObject(this);
-
 		for (const TSubclassOf<UGameplayEffect> Effect : CharacterDataAsset->CharacterData.Effects)
 		{
-			ApplyGameplayEffectsToSelf(Effect, EffectContext);
+			ApplyGameplayEffectsToSelf(Effect);
 		}
 	}
 }
 
-bool ACharacterBase::ApplyGameplayEffectsToSelf(const TSubclassOf<UGameplayEffect>& Effect, const FGameplayEffectContextHandle& InEffectContext)
+bool ACharacterBase::ApplyGameplayEffectsToSelf(const TSubclassOf<UGameplayEffect>& Effect)
 {
-	const FGameplayEffectSpecHandle SpecHandle = AbilitySystem->MakeOutgoingSpec(Effect, DEFAULT_EFFECT_LEVEL, InEffectContext);
+	FGameplayEffectContextHandle EffectContext = AbilitySystem->MakeEffectContext();
+	EffectContext.AddSourceObject(this);
+	
+	const FGameplayEffectSpecHandle SpecHandle = AbilitySystem->MakeOutgoingSpec(Effect, DEFAULT_EFFECT_LEVEL, EffectContext);
 	if (SpecHandle.IsValid())
 	{
 		const FActiveGameplayEffectHandle ActiveGEHandle = AbilitySystem->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
